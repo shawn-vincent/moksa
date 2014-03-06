@@ -1,0 +1,299 @@
+<HTML>
+<HEAD>
+<TITLE>Grammar c:\users\svincent\moksa\src\com\svincent\moksaProlog\Prolog.g</TITLE>
+</HEAD>
+<BODY>
+<table border=1 cellpadding=5>
+<tr>
+<td>
+<font size=+2>Grammar PrologParser</font><br>
+<a href=http://www.ANTLR.org>ANTLR</a>-generated HTML file from c:\users\svincent\moksa\src\com\svincent\moksaProlog\Prolog.g
+<p>
+Terence Parr, <a href=http://www.magelang.com>MageLang Institute</a>
+<br>ANTLR Version 2.5.0; 1989-1998
+</td>
+</tr>
+</table>
+<PRE>
+	
+	package com.svincent.moksaProlog;
+	
+	import java.io.*; 
+	import java.util.Vector;
+	import java.util.Hashtable;
+	
+	import com.svincent.util.*;
+	
+	import antlr.ParserException;
+	import antlr.ScannerException;
+	
+
+/**
+ * The grammer for the Prolog language.
+ */
+class PrologParser extends LLkParser
+
+
+/**
+ * Prolog text is a sequence of directives and clauses.  (6.2.1)
+ *  XXX can operators with priority higher than 999 appear in the
+ *      head of a clause???
+ */
+<a name=prologText>prologText</a>[PrologObject retval]
+	:	<a href=PrologParser.html#clauseOrDirectiveTerm>clauseOrDirectiveTerm</a> <a href=PrologParser.html#prologText>prologText</a> 
+	|	( ) 
+	;
+
+
+<a name=clauseOrDirectiveTerm>clauseOrDirectiveTerm</a>[PrologObject retval]
+	:	<a href=PrologParser.html#term>term</a>[1201] <a href=PrologParser.html#end>end</a> 
+	;
+
+
+<a name=term>term</a>[PrologObject retval] returns [int allowedPriority]
+	:			{ logPred (2, "PREFIX") }?
+( <a href=PrologParser.html#op>op</a>[allowedPriority] ) => <a href=PrologParser.html#prefixOperator>prefixOperator</a>[allowedPriority] 
+	|			{ logPred (2, "INFIX/POSTFIX") }?
+( <a href=PrologParser.html#nonOperatorTerm>nonOperatorTerm</a>[allowedPriority] <a href=PrologParser.html#op>op</a>[allowedPriority] ) => <a href=PrologParser.html#nonOperatorTerm>nonOperatorTerm</a>[allowedPriority] <a href=PrologParser.html#infixTermTail>infixTermTail</a>[allowedPriority, retval] 
+	|			{ logPred (2, "STANDALONE TERM") }?
+<a href=PrologParser.html#nonOperatorTerm>nonOperatorTerm</a>[allowedPriority] 
+	;
+
+
+<a name=end>end</a>
+	:	END 
+	;
+
+
+/**
+ * Directive (6.2.1.1)
+ *  :- term .
+ */
+<a name=directive>directive</a>[PrologObject retval]
+	:	<a href=PrologParser.html#directiveTerm>directiveTerm</a> <a href=PrologParser.html#end>end</a> 
+	;
+
+
+/**
+ * Directive term (6.2.1.1)
+ *  :- (term)
+ *  XXX The principle functor of a directive term is a :-/1
+ */
+<a name=directiveTerm>directiveTerm</a>[PrologObject retval]
+	:	<a href=PrologParser.html#term>term</a>[1201] 
+	;
+
+
+/**
+ * Clause (6.2.1.2)
+ */
+<a name=clause>clause</a>[PrologObject retval]
+	:	<a href=PrologParser.html#clauseTerm>clauseTerm</a> <a href=PrologParser.html#end>end</a> 
+	;
+
+
+/**
+ * Clause term (6.2.1.2)
+ *  XXX The principle functor of 'notIfTerm' is not :-/1
+ *  XXX spv: I say it Must Be :-/2
+ */
+<a name=clauseTerm>clauseTerm</a>[PrologObject retval]
+	:	<a href=PrologParser.html#term>term</a>[1201] 
+	;
+
+
+/**
+ * (6.2.2)
+ * A Prolog read-term can be read as data by calling the predicate
+ * read_term/3
+ *
+ * Any layout text before the term is ignored.  A read-term ends with
+ *   the end token.
+ */
+<a name=readTerm>readTerm</a>[PrologObject retval]
+	:	<a href=PrologParser.html#term>term</a>[1201] <a href=PrologParser.html#end>end</a> 
+	;
+
+
+/**
+ * 6.3.4.3 - Operators
+ * An operator is a name or a comma.
+ */
+<a name=op>op</a>[PrologOperatorTerm retval] returns [int allowedPriority]
+	:	<a href=PrologParser.html#name>name</a> 
+	|	COMMA 
+	;
+
+
+<a name=prefixOperator>prefixOperator</a>[PrologObject retval] returns [int allowedPriority]
+	:	<a href=PrologParser.html#op>op</a>[allowedPriority] <a href=PrologParser.html#term>term</a>[allowedPriority] 
+	;
+
+
+<a name=nonOperatorTerm>nonOperatorTerm</a>[PrologObject retval] returns [int allowedPriority]
+	:	<a href=PrologParser.html#numericConstant>numericConstant</a>[allowedPriority] 
+	|	<a href=PrologParser.html#atomicConstant>atomicConstant</a>[allowedPriority] 
+	|	<a href=PrologParser.html#specialConstant>specialConstant</a>[allowedPriority] 
+	|	<a href=PrologParser.html#variable>variable</a>[allowedPriority] 
+	|			{ logPred (2, "START FUNCTIONAL") }?
+<a href=PrologParser.html#compoundTermFunctional>compoundTermFunctional</a>[allowedPriority] 
+	|	<a href=PrologParser.html#compoundTermList>compoundTermList</a>[allowedPriority] 
+	|	<a href=PrologParser.html#compoundTermCurly>compoundTermCurly</a>[allowedPriority] 
+	|	<a href=PrologParser.html#compoundTermStringLiteral>compoundTermStringLiteral</a>[allowedPriority] 
+	|	<a href=PrologParser.html#parenTerm>parenTerm</a>[allowedPriority] 
+	;
+
+
+<a name=infixTermTail>infixTermTail</a>[PrologObject retval] returns [int allowedPriority, PrologObject head]
+	:			{ logPred (2, "FULL TAIL") }?
+( <a href=PrologParser.html#op>op</a>[allowedPriority] ) => <a href=PrologParser.html#op>op</a>[allowedPriority] 
+		(	( <a href=PrologParser.html#nonOperatorTerm>nonOperatorTerm</a>[allowedPriority] ) => ( <a href=PrologParser.html#nonOperatorTerm>nonOperatorTerm</a>[allowedPriority] ) 
+		|	( ) 
+		) 
+		<a href=PrologParser.html#infixTermTail>infixTermTail</a>[allowedPriority, retval] 
+	|			{ logPred (2, "EMPTY TAIL") }?
+( ) 
+	;
+
+
+<a name=numericConstant>numericConstant</a>[PrologInt retval] returns [int allowedPriority]
+	:			{okPrior(0, allowedPriority)}?
+<a href=PrologParser.html#integer>integer</a> 
+	;
+
+
+<a name=atomicConstant>atomicConstant</a>[PrologConst retval] returns [int allowedPriority]
+	:	<a href=PrologParser.html#atom>atom</a>[allowedPriority] 
+	;
+
+
+<a name=specialConstant>specialConstant</a>[PrologConst retval] returns [int allowedPriority]
+	:			{okPrior(0, allowedPriority)}?
+<a href=PrologParser.html#emptyList>emptyList</a> 
+	|			{okPrior(0, allowedPriority)}?
+<a href=PrologParser.html#curlyBrackets>curlyBrackets</a> 
+	;
+
+
+/**
+ * Note that if variable == '_', then variable is anonymous.
+ */
+<a name=variable>variable</a>[PrologVar retval] returns [int allowedPriority]
+	:			{okPrior(0, allowedPriority)}?
+VARIABLE 
+	;
+
+
+<a name=compoundTermFunctional>compoundTermFunctional</a>[PrologFunct retval] returns [int allowedPriority]
+	:			{okPrior(0, allowedPriority)}?
+<a href=PrologParser.html#atom>atom</a>[allowedPriority] OPEN <a href=PrologParser.html#argList>argList</a>[1201] CLOSE 
+	;
+
+
+/**
+ * 6.3.5 - Compound terms - list notation
+ */
+<a name=compoundTermList>compoundTermList</a>[PrologFunct retval] returns [int allowedPriority]
+	:			{okPrior (0, allowedPriority)}?
+OPEN_LIST <a href=PrologParser.html#items>items</a>[1201] CLOSE_LIST 
+	;
+
+
+/**
+ * 6.3.6 - compound terms - curly bracket notation
+ */
+<a name=compoundTermCurly>compoundTermCurly</a>[PrologObject retval] returns [int allowedPriority]
+	:			{okPrior (0, allowedPriority)}?
+OPEN_CURLY <a href=PrologParser.html#term>term</a>[1201] CLOSE_CURLY 
+	;
+
+
+/**
+ * 6.3.7 - Compound terms - character code list notation.
+ */
+<a name=compoundTermStringLiteral>compoundTermStringLiteral</a>[PrologObject retval] returns [int allowedPriority]
+	:			{okPrior (0, allowedPriority)}?
+CHAR_CODE_LIST 
+	;
+
+
+/**
+ * 6.3.4.1 Operand
+ *  An operand is a term.
+ */
+<a name=parenTerm>parenTerm</a>[PrologObject retval] returns [int allowedPriority]
+	:			{ okPrior (0, allowedPriority) }?
+OPEN <a href=PrologParser.html#term>term</a>[1201] CLOSE 
+	;
+
+
+/**
+ *
+ */
+<a name=integer>integer</a>[PrologInt retval]
+	:	INTEGER 
+	;
+
+
+/**
+ * 6.3.1.3 - Atoms
+ *  An atom which is an operator shall not be the immediate operand of
+ *  an operator. (!)
+ */
+<a name=atom>atom</a>[PrologConst retval] returns [int allowedPriority]
+	:	<a href=PrologParser.html#name>name</a> 
+	;
+
+
+<a name=name>name</a>[PrologConst retval]
+	:	NAME 
+	;
+
+
+<a name=emptyList>emptyList</a>[PrologConst retval]
+	:	OPEN_LIST CLOSE_LIST 
+	;
+
+
+<a name=curlyBrackets>curlyBrackets</a>[PrologConst retval]
+	:	OPEN_CURLY CLOSE_CURLY 
+	;
+
+
+<a name=argList>argList</a>[PrologObject retval] returns [int allowedPriority]
+	:	<a href=PrologParser.html#exp>exp</a>[allowedPriority] 
+		(	COMMA <a href=PrologParser.html#argList>argList</a>[allowedPriority] 
+		|	
+		) 
+		
+	;
+
+
+/**
+ * 6.3.3.1 - Expressions
+ * s.t. 'atom' is an operator but not a comma.
+ */
+<a name=exp>exp</a>[PrologObject retval] returns [int allowedPriority]
+	:	( <a href=PrologParser.html#term>term</a>[999] ) => <a href=PrologParser.html#term>term</a>[999] 
+	|	( ~COMMA ) => <a href=PrologParser.html#atom>atom</a>[allowedPriority] 
+	;
+
+
+<a name=items>items</a>[PrologFunct retval] returns [int allowedPriority]
+	:	<a href=PrologParser.html#exp>exp</a>[allowedPriority] ( COMMA <a href=PrologParser.html#exp>exp</a>[allowedPriority] )* 
+		(	HT_SEP <a href=PrologParser.html#exp>exp</a>[allowedPriority] 
+		|	
+		) 
+	;
+
+
+/**
+ *
+ */
+<a name=floatNumber>floatNumber</a>[PrologObject retval]
+	:	FLOAT_NUMBER 
+	;
+
+</PRE>
+</BODY>
+</HTML>

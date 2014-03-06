@@ -1,0 +1,9 @@
+Manifest-version: 1.0
+Name: com/svincent/smalljava/
+Specification-Title: "Smalljava" 
+Specification-Version: "0.3" 
+Specification-Vendor: "Shawn Vincent"
+Package-Title: "com.svincent.smalljava"
+Package-Version: "0"
+Package-Vendor: "Shawn Vincent"
+

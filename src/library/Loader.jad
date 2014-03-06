@@ -1,0 +1,27 @@
+// Decompiled by Jad v1.5.7. Copyright 1997-99 Pavel Kouznetsov.
+// Jad home page: http://www.geocities.com/SiliconValley/Bridge/8617/jad.html
+// Decompiler options: packimports(3) 
+// Source File Name:   [generated]
+
+package com.svincent.moksa.prolog.system_prolog;
+
+import com.svincent.moksa.PrologEngine;
+import com.svincent.moksa.PrologLoader;
+
+// Referenced classes of package com.svincent.moksa.prolog.system_prolog:
+//            set_input_1, set_input_1_alt1, set_output_1, set_output_1_alt1, 
+//            open_3, flush_output_0, get_char_1, put_char_1, 
+//            nl_0, write_1, append_3, append_3_alt1, 
+//            memberOf_2, memberOf_2_alt1
+
+public class Loader extends PrologLoader
+{
+
+    public Loader()
+    {
+    }
+
+
+// JavaClassFileOutputException: No instruction in ipc_array for 175
+
+}

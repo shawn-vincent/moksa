@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+            "http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<html>
+<head>
+   <title>How I generate the distribution for 3d6 (and others)</title>
+   <link href="moksa.css" rel="stylesheet" type="text/css">
+   <link rev=made href="mailto:svincent@svincent.com">
+</head>
+
+<body>
+
+<h1><img src="images/MoksaImageTeeny.gif">
+How I generate the distribution for 3d6 (and others)</h1>
+
+<h2>Introduction</h2>
+
+<p>How does one generate the distribution for rolling
+<code>s</code>-sided dice <code>r</code> times?  If you think about
+it, this is equivalent to finding the coefficients of the expanded
+expression:</p>
+
+<p class=indented>
+    (1+x+x<sup>2</sup>+ ... +x<sup>s</sup>)<sup>r</sup> (1)
+</p>
+
+<p>Straightforward, eh?  Well, anyway, this next section demonstrates
+an efficient algorithm for computing these coefficients.  (I'm open to
+comments.  Anybody have a better way?)</p>
+
+<p>Note that the obvious solution to this, counting in base 's', is
+extremely inefficient (i.e. - O(S<sup>N</sup>)), and as a result,
+completely unreasonable.
+</p>
+
+<h2>How to calculate those damned coefficients</h2>
+
+<p>Some identities demonstrate that</p>
+
+<p class=indented>
+    (1) == [(1-x<sup>s+1</sup>) / (1-x)]<sup>r</sup> (2)<br>
+    (2) == (1-x<sup>s+1</sup>)<sup>r</sup> * [1 / (1-x)]<sup>r</sup> (3)<br>
+</p>
+
+<p> Now say that </p>
+
+<p class=indented>
+    A == (1-x<sup>s+1</sup>)<sup>r</sup> (4)<br>
+    B == [1 / (1-x)]<sup>r</sup> (5)<br>
+</p>
+
+<p> (So that <code>(2) == A * B</code>) </p>
+
+<p>In the next section, we define C(n, r) == n! / (r! * (n-r)!).  This
+is the standard 'n choose r' thing we keep hearing about.</p>
+
+<p>Some more identities tell us the following:</p>
+
+<p class=indented>
+    A == 1 - C(r, 1)*x<sup>s+1</sup> + C(r, 2)*x<sup>2(s+1)</sup> + ... +
+           (-1)<sup>k</sup> * C(r, k) * x<sup>k(s+1)</sup> + ... +
+           (-1)<sup>r</sup> * C(r, r) * x<sup>r(s+1)</sup><br>
+    B == 1 + C(1+r-1, 1)*x + ... + C(k+r-1, k)*x<sup>k</sup> + ...
+</p>
+
+<p>
+But now we know that <code>(2) == A * B</code>, and more to the point,
+<code>(1) == A * B</code>!  This is what we need.  Finding the
+coefficients in <code>A * B</code> turns out to be really easy, and
+cheap.
+</p>
+
+<p>To find the coefficient of x<sup>v</sup> in A * B, just choose from
+A all those coefficients for powers of x<sup>i</sup> in A such that
+<code>i < v</code>.  Then, for each of these coefficients, choose the
+coefficient of x<sup>j</sup> in B such that <code>i+j == v</code>.
+Then just multiply the two coefficients together.  Sum all of these
+products, and you have the coefficient of x<sup>v</sup>!
+</p>
+
+<p>I believe that this is O(N<sup>2</sup>), although I could be
+convinced otherwise.
+</p>
+
+<p style="text-align: center;"><img
+src="images/MoksaImageTeeny.gif"></p>
+
+<hr>
+
+<p><em>Comments?  Criticisms?  Confusion?  <a
+href="mailto:svincent@svincent.com">Mail me</a>, and I'll try to
+help.</em></p>
+
+<body>
+
+</html>

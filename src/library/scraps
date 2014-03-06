@@ -1,0 +1,61 @@
+parse_prolog_lterm (Tokens, Priority, P, Exp, Rest) :-
+        write ('Trying XF operator.'), nl,
+        is (SubPriority, Priority-1),
+        parse_prolog_term (Tokens, SubPriority, _, A, [name(Op)|BTokens]),
+        write ('Got term, op'), write (term (A)), write (op(Op)), nl,
+        parse_operator_xf_tail (A, Op, BTokens, Priority, P, Exp, Rest).
+
+parse_operator_xf_tail (A, Op, BTokens, Priority, P, Exp, Leftovers) :-
+        current_op (OpPrior, xfx, Op),
+        throw (gotXFX (Op)).
+
+parse_operator_xf_tail (A, Op, BTokens, Priority, P, Exp, Leftovers) :-
+        current_op (OpPrior, xfy, Op),
+        throw (gotXFY (Op)).
+
+parse_operator_xf_tail (A, Op, BTokens, Priority, P, Exp, Leftovers) :-
+        current_op (OpPrior, xf, Op),
+        throw (gotXF (Op)).
+
+
+parse_prolog_lterm (Tokens, Priority, P, Exp, Rest) :-
+        write ('Trying YF operator.'), nl,
+        parse_prolog_lterm (Tokens, Priority, _, A, [name(Op)|BTokens]),
+        write ('Got term, op'), write (term (A)), write (op(Op)), nl,
+        parse_operator_yf_tail (A, Op, BTokens, Priority, P, Exp, Rest).
+
+parse_operator_yf_tail (A, Op, BTokens, Priority, P, Exp, Leftovers) :-
+        current_op (OpPrior, yfx, Op),
+        parse_prolog_term (BTokens, Priority, _, B, Leftovers),
+        >=(Priority, OpPrior),
+        =(P, OpPrior),
+        =..(Exp, [Op, A, B]).
+
+parse_operator_xf_tail (A, Op, BTokens, Priority, P, Exp, Leftovers) :-
+        current_op (OpPrior, xf, Op),
+        throw (gotYF (Op)).
+
+
+% An operand is a term.
+parse_prolog_term (Tokens, Priority, P, Term, Rest) :-
+        write ('Trying lterm term...'), write (Tokens),
+        write (', '),
+        write (priority (Priority)), nl,
+        parse_prolog_lterm (Tokens, Priority, P, Term, Rest),
+        write ('Got lterm term'), write (Name), nl.
+
+parse_prolog_lterm (Tokens, Priority, P, LTerm, Rest) :-
+        is (NewPriority, Priority-1),
+        write ('Trying term lterm...'), %write (Tokens),
+        write (priority (NewPriority)), nl,
+        parse_prolog_term (Tokens, NewPriority, P, LTerm, Rest),
+        write ('Got term lterm'), write (Name), nl.
+
+
+% XXX broken.
+
+parse_prolog_functor_args ([close | Rest], [], Rest) :-
+        write ('got terminal case '), nl.
+parse_prolog_functor_args ([Arg|Rest], [Arg|MoreArgs], FinalRest) :-
+        write ('got arg '), write (Arg), nl,
+        parse_prolog_functor_args (Rest, MoreArgs, FinalRest). 

@@ -1,0 +1,22 @@
+
+
+Want to build data structure, generate bytecodes/java code from it.
+
+data structure should be parseable from a limited subset/variant of the
+Java language. (Call it Smalljava?)
+
+Maybe ultimately put a Java front end on it, as well.
+
+
+Examples of Smalljava code:
+
+   com/svincent/util/Util.out->println(I)V (32);
+   
+   int i;
+   for (i=0; i<20; i++)
+     {
+       com/svincent/util/Util.out->println(I)V (i);
+     }
+
+   this->foo(Lcom/svincent/util/Util)V (x);
+

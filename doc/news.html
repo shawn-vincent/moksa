@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+            "http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<html>
+
+<head>
+   <title>Moksa: News</title>
+   <link href="moksa.css" rel="stylesheet" type="text/css">
+   <link rev="made" href="mailto:svincent@svincent.com">
+</head>
+
+<body>
+
+<h1><img src="images/MoksaImageTeeny.gif">Moksa: News</h1>
+
+<hr/>
+
+<img class=floatRight src="images/MoksaImage2.gif">
+
+<h2>Old News (Olds!?)</h2>
+
+  <p><em>New news comes out on the <a
+  href="http://www.svincent.com/moksa/">main web page</a></em></p>
+
+<h3>December 8th, 1999: Evaluation of Mercury</h3>
+
+  <p>The latest update updates the IO primitives a bit, cleaning them
+  up.  It's not done, by a long shot, but something's come up.</p>
+
+  <p>After writing a bunch of Prolog code, I discovered a programming
+  language called <a
+  href="http://www.cs.mu.oz.au/research/mercury/index.html">Mercury</a>.
+  Mercury is a generalization of Prolog with two significant
+  advantages (for me).  First, it is rigorously typed, allowing
+  serious compile-time optimizations.  Second, it is entirely logical
+  (without any of Prolog's imperative functionality).</p>
+
+  <p>Mercury intrigues me.  I am evaluating it now, reading their
+  online papers, and playing with their compiler to write programs,
+  and it's an exciting language.  I truly disliked Prolog's dynamic
+  type system: I am an earnest believer in static typing -- in Java,
+  once your program compiles, it often just runs.  Apart from anything
+  else, Mercury is a much <em>faster</em> language than Prolog, and
+  this interests me as well.</p>
+
+  <p>What does this mean for Moksa?  Well, that's yet to be seen.  I
+  may port Mercury to a Java framework, or I may give up on it after
+  my evaluation and go back to pure Prolog.  We shall see.</p>
+
+<h3>December 2nd, 1999: Freedom from JavaClass -- enter the Rhino</h3>
+
+  <p>Well, it's done.  I've officially removed any need for users to
+  download and install extra software when they run Moksa:
+  everything's in one small-ish (0.5M) JAR file.</p>
+
+  <p>The answer?  I used to depend on <a
+  href="http://www.inf.fu-berlin.de/~dahm/JavaClass/">JavaClass</a>, a
+  package for reading and manipulating Java class files.  JavaClass is
+  a good package, but it was overkill for my needs (for example, I
+  don't need to parse or edit existing class files), and so was larger
+  and heavier-weight than I might have liked.  It also allowed more
+  flexibility by representing each instruction as an object, which I
+  couldn't really afford.</p>
+
+  <p>Anyway, after a couple grueling days, I've switched over to use
+  the bytecode engine out of <a
+  href="http://www.mozilla.org/rhino/">Rhino</a>.  I don't use the
+  stock version (it has dependencies on Rhino, proper, and I had a few
+  mutes I had to make to it so it could generate everything I needed,
+  plus I don't want to conflict with existing installs of Rhino), but
+  it provided nearly all the functionality I needed, at a very low
+  cost.  See the package <code>com.svincent.smalljava.rhino</code> for
+  more information.</p>
+
+  <p>With the shackles of 3rd party libraries gone, I finally made my
+  Makefile generate a JAR file for distribution:
+  <code>moksa.jar</code> is now available for putting in your
+  <code>CLASSPATH</code> or invoking with the <code>-jar</code> option
+  of the <code>java</code> utility.</p>
+
+  <p>Anyway.  Next steps?  More cleanup.  Ultimately, I want to
+  improve performance by changing the compiler to not create so many
+  objects in the invocation of a Rule.  Once I feel sufficiently
+  ambitious, I'll do that.  In the meantime, I want to clean the whole
+  beast up.</p>
+
+<h3>November 30th, 1999: Cleanup + Refactoring!</h3>
+
+  <p>General cleanup.  Moksa had gotten gross with silt and some poor
+  design decisions early on.  Some of that has been removed.  In
+  particular, the class <code>com.svincent.moksa.Wam</code> used to be
+  the center of the universe, doing all sorts of unrelated things.
+  Now its functinality has been seperated out into three classes:</p>
+
+    <ol>
+      <li><code>Wam</code> - exactly an implementation of a WAM: no
+      more, no less</li>
+
+      <li><code>PrologEngine</code> - the top-level class with the
+      public interface + subsystems such as the package manager and
+      I/O.</li>
+
+      <li><code>PrologFactory</code> - a factory for creating various
+      objects used by Moksa (particularly <code>PrologTerm</code>s and
+      <code>Continuation</code>s.</li>
+    </ol>
+
+  <p>Much nicer.  Plus another round of documenting some of the code,
+  and a release.  Next step?  Probably to remove my dependency on the
+  JavaClass API.  I want to be self-sufficient.  I'm going to look at
+  the <a href="http://www.mozilla.org/rhino/">Rhino</a> bytecode
+  generation API.  It has an API inside of it that seems small and
+  pleasant: the main deal is only 1500 lines of code.  Shouldn't be a
+  problem to use it, either: it's under the fairly liberal MPL.</p>
+
+
+<h3>November 25th, 1999: ANTLR is gone!</h3>
+
+  <p>I just removed the dependency on ANTLR that I had.  No more ANTLR
+  grammars for me: I've now got two.  The next step is to hook up the
+  Prolog-based parser, and to add an option to Prologc that can switch
+  between them.  Plus lots of improvements.</p>
+
+<h3>November 24th, 1999: New Parser and Package Manager</h3>
+
+  <p>Things are coming along nicely.  I finished a pure-Prolog parser
+  to replace the ANTLR-based parser I have currently.  It's not hooked
+  up, yet, but it will be.</p>
+
+  <p>Also, lots of commenting, general improvements, and headway
+  towards removing gross things that have crept in.  I figured it was
+  time for a release to give myself a bit of a break from heads-down
+  programming.  I've also re-engineered the web site a bit, wrote a
+  touch more documentation (or at least rearranged that which was
+  already there, and brought back some from older and better days),
+  and just generally improved things.</p>
+
+  <p>Anyway, tonight is my night to watch TV (Hercules and Xena: the
+  only shows I ever watch, and tonight's Hercules is the final episode
+  of the series!  Gasp!), so I'll get as much done as possible, and
+  probably dothe actual release tomorrow.</p>
+
+<h3>November 17th, 1999: Repackaged things</h3>
+
+  <p>It came to my attention that the distribution of MoksaProlog that
+  was put up yesterday didn't work.  Go figure.  Anyway, it's all
+  repackaged, life is good, and I'm reworking how the web site works.
+  You can <em>really</em> <a
+  href="http://www.svincent.com/moksa/dist/moksa-0.2.zip">download</a>
+  Moksa now.</p>
+
+  <p>And in lieu of documentation, here's a quick tutorial in using
+  MoksaProlog.</p>
+
+  <p>Simplified Usage:</p>
+  <pre>
+     java -jar moksaProlog.jar [-src prolog-file] [-rule rule-def] [-goal goal]
+  </pre>
+
+  <p>The other option you might be interested in is
+  <code>-help</code>.  It prints a help message and exits the
+  compiler.  That's where all the options are documented.</p>
+
+  <p>So, for example, using the <code>test.pl</code> source file
+  distributed with MoksaProlog, you could type:</p>
+
+  <pre>
+      java -jar moksaProlog.jar -src test.pl -goal &quot;append ([a, b], [c], L).&quot;
+  </pre>
+
+  <p>And get</p>
+
+  <pre>
+      MoksaProlog 0.1 Ready.
+      That''s all folks!
+      Did append, got [a, b, c, d, e, f]
+      'append ([a, b], [c], L).' succeeded with bindings:
+           L = [a, b, c]
+  </pre>
+
+  <p>Pretty super.  Go nuts.  I apologize for the lack of an
+  interactive environment.  That'll be one of the next things I
+  do.</p>
+
+<h3>November 16th, 1999: MoksaProlog does Compilation</h3>
+
+  <p>Step 2 is done.  I got up really early this morning, and added
+  dynamic compilation to bytecodes to MoksaProlog.  Plus, I added
+  command line options, and everything.</p>
+
+  <p>Soon I'll package it up nicely so that it's easier to compile (it
+  currently depends on 2 packages, ANTLR and JavaClass, which aren't
+  distributed with it -- this will change)</p>
+
+  <p>What's left?  Well, cleanup, solidification, and general
+  improvements.  Complete ISO Prolog support.  Add extensions.</p>
+
+  <p>And finally, extend to support true Moksa stuff: constraint logic
+  programming.</p>
+
+  <p>Soon, soon, soon....</p>
+
+<h3>November 15th, 1999: First release of MoksaProlog</h3>
+
+  <p>It's buggy, it's shaky, it's really alpha (0.1), but it works,
+  and implements nearly all of core Prolog (minus many of the builtin
+  terms).  I stick it here for public amusement, not widespread use.
+  It is, of course, being distributed under the <a
+  href="doc/gpl.html">Gnu Public License</a>.</p>
+
+  <p>What's MoksaProlog, you ask?  Well, I'm glad you did.
+  MoksaProlog is the first (very early) release of a new 100% Java
+  Prolog environment.  It runs with JDK1.2, and will ultimately
+  support all of ISO Prolog.  <a
+  href="mailto:svincent@svincent.com">Bug reports</a> would be
+  appreciated.</p>
+
+  <p>It will eventually have many useful extensions.  Even this early
+  alpha release has some primitive facilities for interacting with
+  Java objects from Prolog.  Internet I/O will be implemented,
+  including such wonderful things like XML processing,
+  sending/receiving mail, etc.  Some interesting mechanism for
+  dynamically loading modules off of the Internet will be supported,
+  also.</p>
+
+  <p>MoksaProlog is just the beginning, however.  I'm only writing
+  this Prolog environment as a basis for Moksa, which is my constraing
+  logic programming language for generating random content for
+  roleplaying games.  Overkill, I admit, but I don't like half-hearted
+  solutions.</p>
+
+  <p>What's next on my plate?  Well, first thing is to integrate
+  Smalljava into the main interpreter, so that terms can be
+  dynamically (and statically) compiled into Java source and/or
+  bytecodes.  After that, probably rewrite the parser in Prolog (the
+  current parser is the ugliest thing I've ever seen), build an
+  interactive environment, then go nuts writing all the ISO Prolog
+  builtin terms.</p>
+
+  <p>After I have a reasonably complete and efficient Prolog
+  environment, I'll add the final constaint programming features that
+  will turn it into Moksa.  Then, it shall be complete.  And Moksa
+  shall walk the earth, and God will see that it is good.</p>
+
+  <p>&quot;Blurring the line between subjective and objective
+  reality,&quot; indeed.</p>
+
+<h3>Older News: First release of Smalljava</h3>
+
+  <p><a href="doc/smalljava/">Smalljava</a> is a Java API for
+  generating bytecodes in a natural, convenient way.</p>
+
+  <p>Once Smalljava is stable, work will begin on MoksaProlog, a 100%
+  Java Prolog environment, which will become the basis of Moksa.</p>
+
+<p style="text-align: center;"><img
+src="images/MoksaImageTeeny.gif"></p>
+
+<hr>
+
+<p>Moksa can be found at <a href="http://www.svincent.com/moksa/">
+http://www.svincent.com/moksa/</a>
+
+<p><em>Comments, Criticisms, Complaints, Crazy Cookies to: <a
+HREF="mailto:svincent@svincent.com">svincent@svincent.com</a></em></p>
+
+<p><em><a href="http://www.svincent.com/shawn/">To Shawn's web
+page!</a></em></p>
+
+</body>
+</html>

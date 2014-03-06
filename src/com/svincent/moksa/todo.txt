@@ -1,0 +1,16 @@
+
+- repackage so that ANTLR and friends are part of main jar file:
+  needed for "java -jar moksa.jar" to work
+
+- clean up, debug, write test suites
+
+- figure out "modules"
+wo
+
+hello there, my name is shawn vincent, and I can type.  Wow!!
+
+
+hello there, my name is shawn vincent, and i can type.  Wow!!
+
+
+

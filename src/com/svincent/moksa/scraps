@@ -1,0 +1,1114 @@
+
+//      public static void main (String[] args)
+//      {
+//        try {
+//          Wam wam = new Wam ();
+//          WamParser parser = new WamParser (wam);
+
+//          PrologRuleCompiler compiler = new PrologRuleCompiler (wam);
+
+//          SmallClass ruleClass = 
+//            compiler.makeRuleClass 
+//            (parser.parse ("p(f(X), h(Y, f(a)), Z) :- x(Z)."));
+
+//          ruleClass.writeAsBytecodes ("p_3.class");
+//          ruleClass.writeAsJava (Util.out);
+
+//          CompiledRule rule = compiler.loadClass (ruleClass);
+
+//          Util.out.println ("rule == "+rule.tag ());
+//          Util.out.println ("rule arity == "+rule.getArity ());
+//          Util.out.println ("rule makeTerm == "+rule.makeTerm (wam));
+
+//          // --- fake out call
+//          wam.tryMeElse (null, 0, null);
+
+//          wam.setRegister (0, wam.makeVariable ("X"));
+//          wam.setRegister (1, wam.makeVariable ("Y"));
+//          wam.setRegister (2, wam.makeAtom ("thirdParameter"));
+//          Util.out.println ("rule invokeRule == "+rule.invokeRule (wam));
+
+//          wam.trustMe ();
+
+//        } catch (Throwable ex) {
+//          ex.printStackTrace (Util.out);
+//        }
+//      }
+  // XXX change data type to something nicer...
+  // XXX maybe move to WAM or someplace?? Multithreading issues?
+  static Stack continuationPool = new Stack ();
+
+    synchronized (continuationPool) {
+      if (true || continuationPool.isEmpty ())
+        {
+        }
+      else
+        {
+          Continuation top = (Continuation)continuationPool.pop ();
+          top.wam = wam;
+          top.rule = rule;
+          top.registers = registers;
+          top.next = next;
+          return top;
+        }
+    }
+
+  // XXX no longer called.  The lifespans of Continuations is too difficult.
+  // XXX Choicepoints save old Continuations around.  Weak references 
+  //     also seem not to work.
+  public static void returnToPool (Wam wam, Continuation continuation)
+  {
+    // XXX fix this to be more general.
+    if (continuation == wam.Fail) return;
+
+    synchronized (continuationPool) {
+
+      continuation.wam = null;
+      continuation.rule = null;
+      continuation.registers = null;
+      continuation.next = null;
+      continuation.dead = true;
+
+      continuationPool.push (continuation);
+    }
+  }
+
+
+//    public static void main (String[] args)
+//    {
+//      try {
+//        Wam wam = new Wam ();
+//        WamParser parser = new WamParser (wam);
+
+//        PrologRuleCompiler compiler = new PrologRuleCompiler (wam);
+
+//        SmallClass ruleClass = 
+//          compiler.makeRuleClass 
+//          (parser.parse ("p(f(X), h(Y, f(a)), Z) :- x(Z)."));
+
+//        ruleClass.writeAsBytecodes ("p_3.class");
+//        ruleClass.writeAsJava (Util.out);
+
+//        CompiledRule rule = compiler.loadClass (ruleClass);
+
+//        Util.out.println ("rule == "+rule.tag ());
+//        Util.out.println ("rule arity == "+rule.getArity ());
+//        Util.out.println ("rule makeTerm == "+rule.makeTerm (wam));
+
+//        // --- fake out call
+//        wam.tryMeElse (null, 0, null);
+
+//        wam.setRegister (0, wam.makeVariable ("X"));
+//        wam.setRegister (1, wam.makeVariable ("Y"));
+//        wam.setRegister (2, wam.makeAtom ("thirdParameter"));
+//        Util.out.println ("rule invokeRule == "+rule.invokeRule (wam));
+
+//        wam.trustMe ();
+
+//      } catch (Throwable ex) {
+//        ex.printStackTrace (Util.out);
+//      }
+//    }
+
+
+
+  // -------------------------------------------------------------------------
+  // ---- Test Code ----------------------------------------------------------
+  // -------------------------------------------------------------------------
+
+//    public static void main (String[] args)
+//    {
+//      Wam wam = new Wam ();
+
+//      try {
+//        wam.loadModule (args[0]);
+//      } catch (Throwable ex) {
+//        ex.printStackTrace (Util.out);
+//      }
+
+//      Util.out.flush ();
+//    }
+
+//    public static void main2 (String[] args)
+//    {
+//      Wam wam = new Wam ();
+
+//      String goal = "append([a, b], [c], X).";
+//      if (args.length > 0) goal = args[0];
+
+//      wam.test (goal);
+//    }
+
+//    public void test ()
+//    {
+//      test ("append([a, b], [c], X).");
+//    }
+
+//    public void test (String goal)
+//    {
+//      try {
+//        Wam wam = this;
+
+//        WamParser parser = new WamParser (wam);
+
+//        wam.asserta (wam.compileRule
+//          ((CompoundTerm)parser.parse ("p(f(X), h(Y, f(a)), Z) :- x(Z).")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse ("x(f(f(a))).")));
+
+//        // --- define 'append/3'.
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse ("append([],L,L).")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse ("append([A|L1],L2,[A|L3]) :- append(L1,L2,L3).")));
+
+//        // --- define 'memberOf/2'.
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse ("memberOf(X,[X|_]).")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse ("memberOf(X,[_|Y]) :- memberOf(X,Y).")));
+
+//        // --- define 'while/2'.
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("while(X) :- cond(X), body(X), fail.")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("cond(X) :- memberOf (X, [bob, frank, mahir, jacob]).")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("body(X) :- write (X), write (' ').")));
+
+//        // --- define 'even/1'.
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("even(X) :- X=2, X>0, !, X < 0.")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("even(X) :- X=10.")));
+
+//        // --- define 'testThrow/0'.
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("testThrow :- catch (level2, X, write (X)), fail.")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("testThrow :- write ('Clause 2').")));
+
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("level2 :- X is 2, fail.")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("level2 :- level3.")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("level2 :- write ('Not executed').")));
+
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("level3 :- X is 2, fail.")));
+//        wam.asserta (wam.compileRule 
+//          ((CompoundTerm)parser.parse 
+//           ("level3 :- throw ('Hello from level 3!').")));
+
+//        // --- invoke p(Z, h(Z, W), f(W)).
+
+//        CompoundTerm p = (CompoundTerm)parser.parse (goal);
+//        boolean success = wam.invoke (p);
+//        wam.log ().println (success);
+//        if (success)
+//          p.printVariables (wam.log ());
+
+//        // --- test register growth: might never happen in practice, so
+//        //   - should be extra careful about bugs...
+//    //      wam.setRegister (0, new Variable ("Zeroth"));
+//    //      wam.setRegister (1, new Variable ("Zeroth"));
+//    //      wam.setRegister (2, new Variable ("Zeroth"));
+//    //      wam.setRegister (46, new Variable ("Zeroth"));
+//    //      wam.setRegister (1234, new Variable ("Zeroth"));
+//      } catch (Throwable ex) {
+//        ex.printStackTrace (Util.out);
+//      }
+//    }
+
+  // -------------------------------------------------------------------------
+  // ---- File I/O Utilities (some so useful they should be moved off) -------
+  // -------------------------------------------------------------------------
+
+  /**
+   * Expands a list of filenames according to common globbing
+   * conventions.  (i.e. - the characters * and ? are expanded into
+   * filenames, respectively)
+   *
+   * The result is a List of File objects.
+   **/
+  public static List globExpand (File relativeTo, List patterns) 
+    throws FileNotFoundException
+  {
+    List files = new ArrayList ();
+    Iterator i = patterns.iterator ();
+    while (i.hasNext ())
+      {
+        String pattern = (String)i.next ();
+        File[] list = globExpand (relativeTo, pattern);
+        if (list.length == 0)
+          throw new FileNotFoundException ("Could not find file "+pattern);
+        files.addAll (Arrays.asList (list));
+      }
+
+    return files;
+  }
+
+  public static File[] globExpand (File relativeTo, String pattern)
+  { return relativeTo.listFiles (new GlobFileFilter (pattern)); }
+
+  public static class GlobFileFilter implements FileFilter 
+  {
+    char[] filter;
+
+    /**
+     * 'absFilter' is a filter with certain properties.  It must
+     * always be an absolute filter, however.
+     *
+     * It can contain the magic symbols '*' (matches any number of
+     * characters) and '?' (matches any single char)
+     **/
+    public GlobFileFilter (String absFilter)
+    { filter = absFilter.toCharArray (); }
+
+    public boolean accept(File f) 
+    {
+      if (f == null) return false;
+      char[] name = f.getName ().toCharArray ();
+      return matchToEnd (filter, 0, name, 0);
+    }
+    
+    boolean matchToEnd (char[] pattern, int patPos, char[] name, int namePos)
+    {
+      if (patPos == pattern.length)
+        {
+          // --- done.
+          if (namePos < name.length) return false;
+          return true;
+        }
+
+      if (namePos == name.length)
+        return false;
+
+      switch (pattern[patPos])
+        {
+        case '?':
+          return matchToEnd (pattern, patPos+1, name, namePos+1);
+
+        case '*':
+          // --- do fancy stuff.
+          for (int i=namePos; i<=name.length; i++)
+            if (matchToEnd (pattern, patPos+1, name, i)) return true;
+
+          return false;
+
+        default:
+          if (name[namePos] != pattern[patPos]) return false;
+          return matchToEnd (pattern, patPos+1, name, namePos+1);
+        }
+    }
+
+    public static void main (String[] args)
+    {
+      File[] files = new File (".").listFiles (new GlobFileFilter (args[0]));
+      for (int i=0; i<files.length; i++)
+        Util.out.println (files[i].getName ());
+    }
+  }
+    while (true)
+      {
+        int c = in.peekChar ();
+        switch (c)
+          {
+            case -1: return out.toString ();
+
+            case '"':
+              in.consume ('"');
+              c = in.peekChar ();
+              // --- double-double quote characters
+              if (c == '"')
+                {
+                  in.consume ('"');
+                  out.append ('"');
+                }
+              // --- normal end of string.
+              else 
+                return out.toString ();
+              break;
+
+          case '\\':
+            out.append (readEscapeSequence (in));
+            break;
+
+          default:
+            c = in.readChar ();
+            out.append ((char)c);
+          }
+      }
+
+//      c = in.peekChar ();
+//      boolean done = false;
+//      while (!done)
+//        {
+//          switch (c)
+//            {
+//            case '`':
+//              in.consume ('`');
+//              out.append ('`');
+//              break;
+//            case '"':
+//              in.consume ('"');
+//              out.append ('"');
+//              break;
+//            case '\'':
+//              c = in.peekChar (2);
+//              if (c == '\'') 
+//                {
+//                  in.consume ('\'');
+//                  in.consume ('\'');
+//                  out.append ('\'');
+//                }
+//              else done = true;
+//              break;
+
+//            case '\\':
+//              out.append (readEscapeSequence (in));
+//              break;
+
+//            default:
+//              if (isGraphic ((char)c) || isAlphanumeric ((char)c) ||
+//                  isSolo ((char)c) || c == ' ')
+//                {
+//                  in.consume ((char)c);
+//                  out.append ((char)c);
+//                }
+//              else
+//                done = true;
+//              break;
+//            }
+
+//          c = in.peekChar ();
+//        }
+
+  /**
+   * Backtrack to the next alternative.
+   **/
+  Instruction backtrack ()
+  {
+    ChoicePoint cp = getLastChoicepoint ();
+    
+    if (debug)
+      log ().println ("Backtracking to choicepoint "+cp.tag ());
+
+    // --- restore the registers.
+    cp.restoreRegisters ();
+
+    // --- unwind the trail
+    unwindTrail ();
+
+    // --- reset the cut register so that if a cut gets executed, this
+    //   - choicepoint will go away.
+    currentCut = lastChoicePoint - 1;
+
+    return cp.getNextAlternative ();
+  }
+
+//    /**
+//     * Parses rule of form 
+//     *    foo() :- bar ().
+//     * Doesn't handle empty heads, for now...
+//     **/
+//    public Structure parseRule (Tokenizer in, Map vars) 
+
+//      throws ParserException
+//    {
+//      Structure retval = parseStructure (in, vars);
+
+//      String la = in.lookahead ();
+//      if (isImplies (la))
+//        {
+//          in.nextImplies ();
+
+//          Structure body = parseRuleBody (in, vars);
+
+//          in.nextEnd ();
+
+//          return wam.makeStructure (":-", retval, body);
+//        }
+//      else
+//        {
+//          in.nextEnd ();
+
+//          return retval;
+//        }
+//    }
+
+//    public Structure parseRuleBody (Tokenizer in, Map vars)
+//      throws ParserException
+//    {
+//      Structure retval = parseStructure (in, vars);
+
+//      if (isComma (in.lookahead ()))
+//        {
+//          in.nextComma ();
+//          retval = wam.makeStructure (",", retval, parseRuleBody (in, vars));
+//        }
+
+//      return retval;
+//    }
+
+//    public Structure parseList (Tokenizer in, Map vars) 
+//      throws ParserException
+//    {
+//      in.nextListOpen ();
+//      Structure retval;
+//      if (!isListClose (in.lookahead ()))
+//        retval = parseListBody (in, vars);
+//      else
+//        retval = wam.makeStructure ("[]");
+//      in.nextListClose ();
+
+//      return retval;
+//    }
+
+//    public Structure parseListBody (Tokenizer in, Map vars)
+//      throws ParserException
+//    {
+//      Atom a = parseAtom (in, vars);
+
+//      String la = in.lookahead ();
+//      if (isComma (la))
+//        {
+//          in.nextComma ();
+//          return wam.makeStructure (".", a, parseListBody (in, vars));
+//        }
+//      else if (isBar (la))
+//        {
+//          in.nextBar ();
+//          return wam.makeStructure (".", a, parseAtom (in, vars));
+//        }
+//      else
+//        {
+//          return wam.makeStructure (".", a, wam.makeStructure ("[]"));
+//        }
+//    }
+
+
+//    public Atom parseAtom (Tokenizer in, Map vars) throws ParserException
+//    {
+//      String la = in.lookahead ();
+//      if (!isAtomStart (la)) 
+//        throw new ParserException 
+//          ("Expected either variable or structure, got "+la);
+//      boolean isVariable = isName (la) && Character.isUpperCase (la.charAt (0));
+//      if (isVariable)
+//        return parseVariable (in, vars);
+//      else
+//        return parseStructure (in, vars);
+//    }
+
+//    public Variable parseVariable (Tokenizer in, Map vars) 
+//      throws ParserException
+//    {
+//      String name = in.nextName ();
+//      Variable var = (Variable)vars.get (name);
+//      if (var == null)
+//        {
+//          var = wam.makeVariable (name);
+//          vars.put (name, var);
+//        }
+//      return var;
+//    }
+
+
+//    public Structure parseStructure (Tokenizer in, Map vars) 
+//      throws ParserException
+//    {
+//      String la = in.lookahead ();
+
+//      if (isListOpen (la))
+//        return parseList (in, vars);
+
+//      String name = in.nextName ();
+
+//      List collector = new ArrayList ();
+    
+//      la = in.lookahead ();
+//      if (isOpen (la))
+//        {
+//          in.nextOpen ();
+
+//          la = in.lookahead ();
+//          if (!isClose (la))
+//            {
+//              // --- at least one child.
+//              Atom a = parseAtom (in, vars);
+//              collector.add (a);
+//              la = in.lookahead ();
+//              while (isComma (la))
+//                {
+//                  // --- more children.
+//                  in.nextComma ();
+//                  a = parseAtom (in, vars);
+//                  collector.add (a);
+//                  la = in.lookahead ();
+//                }
+//            }
+//          in.nextClose ();
+//        }
+
+//      int size = collector.size ();
+//      Atom[] children;
+//      if (size > 0)
+//        {
+//          children = new Atom[collector.size ()];
+//          children = (Atom[])collector.toArray (children);
+//        } 
+//      else
+//        {
+//          children = Atom.EmptyArray;
+//        }
+
+//      return wam.makeStructure (internalizeName (name), children);
+//    }
+
+//    public String internalizeName (String s)
+//    {
+//      if (s.charAt (0) == '\'')
+//        s = s.substring (1, s.length () - 1);
+
+//      return s;
+//    }
+
+//    public static boolean isName (String s)
+//    {
+//      if (s == null) return false;
+
+//      int len = s.length ();
+
+//      if (len == 0) return false;
+
+//      char firstChar = s.charAt (0);
+
+//      if (Character.isJavaIdentifierStart (firstChar)) 
+//        {
+//          for (int i=1; i<len; i++)
+//            if (!Character.isJavaIdentifierPart (s.charAt (i))) return false;
+
+//          return true;
+//        }
+//      else if (firstChar == '\'')
+//        {
+//          if (s.charAt (len-1) != '\'') return false;
+//          // XXX check contents to ensure no unescaped ' chars, as well
+//          // XXX as no end ' escaped.
+//          return true;
+//        }
+//      else
+//        return false;
+//    }
+
+//    public static boolean isAtomStart (String s) 
+//    { return isVariableStart (s) || isStructureStart (s); }
+
+//    public static boolean isVariableStart (String s) 
+//    { return isName (s); }
+//    public static boolean isStructureStart (String s) 
+//    { return isName (s) || isListOpen (s); }
+
+//    public static boolean isOpen (String s) { return "(".equals (s); }
+//    public static boolean isClose (String s) { return ")".equals (s); }
+//    public static boolean isListOpen (String s) { return "[".equals (s); }
+//    public static boolean isListClose (String s) { return "]".equals (s); }
+//    public static boolean isBar (String s) { return "|".equals (s); }
+//    public static boolean isComma (String s) { return ",".equals (s); }
+//    public static boolean isImplies (String s) { return ":-".equals (s); }
+//    public static boolean isEnd (String s) { return ".".equals (s); }
+
+//    /**
+//     * A simple Prolog tokenizer.
+//     **/
+//    public static class Tokenizer {
+    
+//      BufferedReader in;
+//      String pushback = null;
+
+//      public Tokenizer (String _in) { this (new StringReader (_in)); }
+
+//      public Tokenizer (Reader _in)
+//      {
+//        if (_in instanceof BufferedReader) 
+//          in = (BufferedReader)_in;
+//        else
+//          in = new BufferedReader (_in);
+//      }
+
+//      public void pushback (String s) { pushback = s; }
+
+//      public void done () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (s != null) throw new ParserException ("Expected EOF, got "+s);
+//      }
+
+//      public String lookahead () throws ParserException
+//      {
+//        String s = nextToken ();
+//        pushback (s);
+//        return s;
+//      }
+
+//      public String nextName () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isName (s)) throw new ParserException 
+//          ("Expected name, got "+s);
+//        return s;
+//      }
+
+//      public String nextOpen () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isOpen (s)) throw new ParserException 
+//          ("Expected open ('('), got "+s);
+//        return s;
+//      }
+
+//      public String nextClose () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isClose (s)) throw new ParserException 
+//          ("Expected close (')'), got "+s);
+//        return s;
+//      }
+
+//      public String nextListOpen () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isListOpen (s)) throw new ParserException 
+//          ("Expected listOpen ('['), got "+s);
+//        return s;
+//      }
+
+//      public String nextListClose () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isListClose (s)) throw new ParserException 
+//          ("Expected listClose (']'), got "+s);
+//        return s;
+//      }
+
+//      public String nextComma () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isComma (s)) throw new ParserException 
+//          ("Expected comma (','), got "+s);
+//        return s;
+//      }
+
+//      public String nextImplies () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isImplies (s)) throw new ParserException 
+//          ("Expected implies (':-'), got "+s);
+//        return s;
+//      }
+
+//      public String nextEnd () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isEnd (s)) throw new ParserException 
+//          ("Expected end ('.'), got "+s);
+//        return s;
+//      }
+
+//      public String nextBar () throws ParserException
+//      {
+//        String s = nextToken ();
+//        if (!isBar (s)) throw new ParserException 
+//          ("Expected bar ('|'), got "+s);
+//        return s;
+//      }
+
+//      /**
+//       * <p>Skip whitespace, tokens are
+//       * <code>[a-zA-Z][a-zA-Z0-9]*</code>, and the punctuation symbols
+//       * matching <code>[(),]</code>. </p>
+//       *
+//       * <p>null on EOF</p>
+//       **/
+//      public String nextToken () throws ParserException
+//      {
+//        if (pushback != null)
+//          {
+//            String retval = pushback;
+//            pushback = null;
+//            return retval;
+//          }
+
+//        try {
+//          int c = in.read ();
+
+//          // --- skip leading whitespace.
+//          while (c != -1 && Character.isWhitespace ((char)c))
+//            c = in.read ();
+
+//          switch (c)
+//            {
+//            case -1: return null;
+
+//            case '(': return "(";
+//            case ')': return ")";
+//            case '[': return "[";
+//            case ']': return "]";
+//            case '|': return "|";
+//            case ',': return ",";
+//            case '.': return ".";
+
+//            case ':': 
+//              c = in.read ();
+//              if (c != '-')
+//                throw new ParserException 
+//                  ("Expected '-' to complete ':-'.  Got "+(char)c);
+//              return ":-";
+
+//            case '\'': return readQuotedEntity ('\'');
+
+//            default:
+//              if (Character.isJavaIdentifierStart ((char)c))
+//                {
+//                  StringBuffer out = new StringBuffer ();
+//                  out.append ((char)c);
+
+//                  // get more characters until end of symbol.
+//                  boolean done = false;
+//                  while (!done) 
+//                    {
+//                      // --- readahead one character.
+//                      in.mark (1);
+//                      c = in.read ();
+//                      if (c == -1 || Character.isWhitespace ((char)c))
+//                        return out.toString ();
+//                      else if (Character.isJavaIdentifierPart ((char)c))
+//                        out.append ((char)c);
+//                      else
+//                        {
+//                          done = true;
+//                          in.reset ();
+//                        }
+//                    } 
+//                  return out.toString ();
+//                }
+//              else
+//                // XXX huh?
+//                throw new ParserException ("Got illegal char '"+(char)c+"'");
+//            }
+//        } catch (IOException ex) {
+//          throw new ParserException ("Unexpected IOException", ex);
+//        }
+//      }
+
+//      /** XXX first char already read. */
+//      String readQuotedEntity (char quoteType) throws ParserException
+//      {
+//        StringBuffer out = new StringBuffer ();
+//        out.append (quoteType);
+
+//        try {
+//          // get more characters until end of symbol.
+//          boolean done = false;
+//          while (!done) 
+//            {
+//              // --- readahead one character.
+//              int c = in.read ();
+//              if (c == -1)
+//                return out.toString ();
+//              else if (c == quoteType)
+//                {
+//                  out.append ((char)c);
+
+//                  // might be done.
+//                  in.mark (1);
+//                  c = in.read ();
+//                  if (c == -1)
+//                    throw new ParserException
+//                      ("Found EOF while reading quoted entity.");
+
+//                  else if (c == '\'')
+//                    ; // doubled quote escapes a single quote.
+//                  else
+//                    {
+//                      in.reset ();
+//                      return out.toString ();
+//                    }
+//                }
+//              else
+//                out.append ((char)c);
+//            } 
+//        } catch (IOException ex) {
+//          throw new ParserException 
+//            ("Got ioexception while parsing quoted entity", ex);
+//        }
+//        return out.toString ();
+//      }
+//    }
+
+//    public Atom parseTerm (String _in) throws ParserException
+//    { return parseTerm (new StringReader (_in)); }
+//    public Atom parseTerm (Reader _in) throws ParserException
+//    { 
+//      PrologParser.Driver driver = 
+//        new PrologParser.Driver (wam, _in, "unknown", 0);
+//      Atom retval = driver.parseTerm ();
+//      if (driver.getErrorCount () > 0)
+//        // XXX get a list of them.
+//        throw new ParserException ("There were exceptions parsing a term!");
+//      return retval;
+//    }
+  /**
+   *
+   */
+  public static class Driver implements ParserErrorSink  {
+
+    String fileName;
+    PrologLexer lexer;
+    PrologMachine machine;
+
+    /**
+     * self ISSUE.
+     * Eventually, save the errors away as well, rather than
+     * just printing them.
+     */
+    int errorCnt = 0;
+
+    Atom Somethingwrong = new Structure("exception".intern(),
+                                                  new WamInteger(666));
+
+    Hashtable dict = new Hashtable ();
+
+    public Driver (PrologMachine _machine)
+    { this (_machine, Util.in, "stdin"); }
+
+    public Driver (PrologMachine _machine, Reader in, String _fileName)
+    {
+      machine = _machine; 
+      fileName = _fileName;
+      lexer = new PrologLexer (in);
+      lexer.setErrorSink (this);
+    }
+
+    public static void main (String[] args)
+      throws IOException
+    {
+      Driver d = new Driver (new PrologMachine ());
+
+      while (true)
+        {
+          Atom obj = d.nextToken ();
+          Util.out.println (obj.toString ());
+        }
+    }
+
+    public Atom nextToken () throws IOException
+    {
+      Token token = lexer.nextToken ();
+
+      int tokenType = token.getType ();
+      String text = token.getText ();
+      switch (tokenType)
+        {
+        case NAME:
+          {
+            if (text.equals ("."))
+              return new Structure ("end_of_clause");
+            else
+              return make_const (text);
+          }
+        case VARIABLE:
+          return make_var (text);
+        case INTEGER:
+          return make_int (text);
+        default:
+          return Somethingwrong;
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // ---- Factories --------------------------------------------------------
+    // -----------------------------------------------------------------------
+
+    String char2string(int c) { return String.valueOf ((char)c); }
+
+    Atom make_const (String sval) 
+    { return new Structure ("const", Structure.makeConst (sval)); }
+
+    Atom make_int (String value) 
+    { return new Structure ("int", new WamInteger (Util.parseInt (value))); }
+
+    Atom make_real () 
+    { return Somethingwrong; }
+
+    Atom make_var (String sval) 
+    {
+      Variable X; 
+      WamInteger I;
+      long occ=0;
+      if (sval.equals ("_")) 
+        {
+          X = new Variable (machine);
+          I = new WamInteger (occ);
+        }
+      else 
+        {
+          X = (Variable)dict.get (sval);
+          if (X == null) 
+            {
+              X = new Variable (machine);
+              dict.put (sval, X);
+            }
+          else 
+            {
+              occ = ((WamInteger)dict.get (X)).IntValue;
+              occ++;
+            }  
+          I=new WamInteger (occ);
+          dict.put (X, I);
+        }
+      return new Structure ("var", X, new Structure (sval), I);
+    }
+
+
+    // -----------------------------------------------------------------------
+    // ---- Error Handling ---------------------------------------------------
+    // -----------------------------------------------------------------------
+
+    public int getErrorCount () { return errorCnt; }
+
+    public void reportError (ScannerException ex) 
+    { 
+      Util.err.println (fileName + ":" + ex.getLine () + 
+			":"+ " Error:" + ex.getErrorMessage ()); 
+      errorCnt++; 
+    }
+
+    public void reportError (ParserException ex) 
+    { 
+      Util.err.println (fileName + ":" + ex.getLine () + 
+			":"+ " Error:" + ex.getErrorMessage ()); 
+      errorCnt++; 
+    }
+
+    public void reportError (String s) 
+    { 
+      Util.err.println ("Error: " + fileName + " " + s); 
+      errorCnt++; 
+    }
+
+    public void reportWarning (String s) 
+    { Util.err.println ("Warning: " + fileName + " " + s); }
+  }
+
+  // -------------------------------------------------------------------------
+  // ---- Test Code ----------------------------------------------------------
+  // -------------------------------------------------------------------------
+
+  /**
+   * Test Code
+   **/
+  public static void main (String[] args)
+  {
+    // --- construct an atom
+    Atom a = makeTestAtom2 ();
+    Atom b = makeTestAtom ();
+
+    boolean success = a.unify (b);
+    if (!success) 
+      Util.out.println ("Failure");
+    else
+      a.printVariables (Util.out);
+
+    // --- print it out.
+    Util.out.println (a.tag ());
+    Util.out.println (b.tag ());
+  }
+
+  /**
+   * Test code.  Makes the atom <code>p(Z, h(Z, W), f(W))</code>. <p>
+   **/
+  public static Atom makeTestAtom ()
+  {
+    return new Structure ("p", 
+                          new Variable ("Z"),
+                          new Structure ("h",
+                                         new Variable ("Z"), 
+                                         new Variable ("W")),
+                          new Structure ("f", new Variable ("W")));
+  }
+
+  /**
+   * Test code.  Makes the atom <code>p(A, B)</code>. <p>
+   **/
+  public static Atom makeTestAtom2 ()
+  {
+    return new Structure ("p", 
+                          new Variable ("A"),
+                          new Variable ("B"),
+                          new Variable ("C"));
+  }
+
+  /**
+   * Test code.  Makes a random Atom.
+   **/
+  public static Atom makeRandomAtom ()
+  { return makeRandomAtom (2); }
+
+  public static Atom makeRandomAtom (int maxDepth)
+  {
+    int r = RandomUtil.randomInt (0, 4);
+    if (r == 0)
+      {
+        return 
+          new Variable (String.valueOf (RandomUtil.randomChar ('A', 'Z')));
+      }
+    else
+      {
+        // --- figure out our maximum arity.
+        int maxArity = 3;
+        if (maxDepth <= 0) maxArity = 0;
+
+        // --- make some children.
+        int arity = RandomUtil.randomInt (0, maxArity);
+        Atom[] children = 
+          arity == 0 ? Atom.EmptyArray : new Atom[arity];
+
+        // --- fill out the children.
+        for (int i=0; i<arity; i++)
+          children[i] = makeRandomAtom (maxDepth-1);
+      
+        return 
+          new Structure (String.valueOf (RandomUtil.randomChar ('a', 'z')),
+                         children);
+      }
+  }
+
+  private Structure[] flatten (Structure body)
+  {
+    List collector = new ArrayList ();
+    while (body.getName ().equals (","))
+      {
+        collector.add (body.getSubterm (0));
+        body = (Structure)body.getSubterm (1);
+      }
+    collector.add (body);
+
+    Structure[] retval = new Structure[collector.size ()];
+    retval = (Structure[])collector.toArray (retval);
+    return retval;
+  }
+

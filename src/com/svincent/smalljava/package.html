@@ -1,0 +1,145 @@
+<html>
+<head>
+</head>
+<body>
+
+<p>Provides an API for generating Java source code and JVM bytecodes.</p>
+
+<h2>Motivation</h2>
+
+<p>Smalljava was motivated by my attempts to write an efficient and
+elegant Prolog environment in Java, work on which is ongoing.  I
+decided that what I wanted to do was automatically generate bytecode
+from Prolog predicates, and execute the bytecode directly, thereby
+gaining all the benefits of all the JIT and HotSpot engineers in my
+own code.</p>
+
+<p>However, generating JVM code is slow and tedious.  Working with
+assembly language has been largely abandoned by the computer industry
+for good reason!  So, I wanted a tool that could act as a simple
+backend for my Prolog environment.  Thus arose Smalljava.</p>
+
+<h2>Architecture</h2>
+
+<p>Smalljava is based on a subset of Java, called Smalljava.
+Smalljava is pretty much exactly a Java compiler with a few
+hard-to-implement language features removed, such as overload
+resolution.  As a result, it's way more tedious to program in
+Smalljava than in Java, but as a compiler backend, it works
+gloriously, as you can use high-level programming constructs like
+loops and control structures, and Smalljava will happily compile the
+code into bytecodes.</p>
+
+<p>Another thing that comes out of this approach is a feature which
+may or may not be useful.  Since Smalljava is very similar to Java, it
+was the work of a few moments to allow it to generate Java source as
+well as JVM code.  This way, the back end of your favorite compiler
+environment can generate source code: either to debug the compiler
+(the JVM code is awfully hard to read), or for other, more insidious
+purposes (you tell me).</p>
+
+<h2>Using Smalljava</h2>
+
+<p>The basic mode of use of Smalljava is as follows.  First, create a
+Smalljava data structure, representing a Smalljava class, using the
+provided builder APIs.  Call a {@link
+com.svincent.smalljava.SmallClass#finalize() finalize} method on the
+data structure, and call a method to spew as Java source or as JVM
+bytecode.  Nothing could be simpler.</p>
+
+<p>You need an example?  Well, there is one example in {@link
+com.svincent.smalljava.SmallClass#main SmallClass}, but another one
+is given here, just to be nice.</p>
+
+<pre>
+{
+  SmallClass c = new SmallClass ("Dog");
+  c.instanceField ("Ljava.lang.String;", "name");
+
+  SmallMethod getName =
+    c.method ("getName()Ljava.lang.String;", Util.EmptyStringArray);
+
+  // ... define getName ...
+
+  SmallMethod setName =
+    c.method ("setName(Ljava.lang.String;)V", new String[] {"_name"});
+  setName.add (new Expr.AssignField ("Dog", "Ljava.lang.String;", "name", 
+                                     new Expr.GetLocal (setName, "_name")));
+
+  // --- finalize the class.                                    
+  c.finalize ();
+
+  // --- write as a Java program.
+  c.writeAsJava ("Dog.java");
+
+  // --- write as a classfile
+  c.writeAsBytecodes ("Dog.class");
+}
+</pre>
+
+<p>The class generated will be the same as the following class</p>
+
+<pre>
+public class Dog extends java.lang.Object
+{
+  String name;
+
+  public Dog () { super (); }
+  public String getName () { /* ... define getName ... */ }
+  public void setName (String _setName) { name = _name; }
+}
+</pre>
+
+<h2>Where do I start?</h2>
+
+<p>The best place to start using Smalljava is probably the {@link
+com.svincent.smalljava.SmallClass SmallClass} class.  The builder API
+and examples are largely self-explanatory.</p>
+
+<h2>This is crap!  How do I complain!?</h2>
+
+<p>Although I try to maintain the highest standards of quality in my
+programming, occassionally, things slip by.  If you have any
+complaints about Smalljava, or have suggestions about where you'd like
+to see it taken, you can <a href="mailto:svincent@svincent.com">send
+me mail</a>, and I'll promise to give your ideas careful
+consideration.</p>
+
+<h2>Licensing</h2>
+
+<p>Smalljava and all its related libraries are being released by me
+under the <a href="http://www.gnu.org/copyleft/gpl.html">GNU General
+Public License</a>.  See the license for more information.  The <a
+href="http://www.gnu.org/">Main GNU website</a> has lots more
+information about free software, if you're interested.</p>
+
+<h2>Future directions</h2>
+
+<p>Eventually, I'd like to put a parser front-end onto Smalljava, so
+you don't have to build the data structures by hand.  Overloading will
+probably also eventually be implemented, but don't hold your
+breath.</p>
+
+<p>More short-term, I intend to write a ClassLoader for SmallJava, so
+that in addition to spewing Java source and JVM classfiles, SmallJava
+classes can be run more or less directly.  Some engineering effort
+will have to go into this before I'm all done.  This is definitely
+going to happen, as I need this functionality for my Prolog
+environment.</p>
+
+<h2>Change History</h2>
+
+<h3>Version 0.2 - Monday, June 7th/1999</h3>
+<ul>
+<li>addition of SmallClassLoader</li>
+<li>addition of ClassLoader.toByteArray, in support of new
+SmallClassLoader.</li>
+</ul>
+
+<h3>Version 0.1 - Sunday, June 6th/1999</h3>
+<ul>
+<li>initial release</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+Manifest-version: 1.0
+Name: com/svincent/moksa/
+Main-Class: com.svincent.moksa.MoksaProlog
+Specification-Title: "Moksa" 
+Specification-Version: "0.5"
+Specification-Vendor: "Shawn Vincent"
+Package-Title: "com.svincent.moksa"
+Package-Version: "0"
+Package-Vendor: "Shawn Vincent"
+

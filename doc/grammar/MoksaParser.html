@@ -1,0 +1,297 @@
+<HTML>
+<HEAD>
+<TITLE>Grammar c:\users\svincent\moksa\src\com\svincent\moksa\Moksa.g</TITLE>
+</HEAD>
+<BODY>
+<table border=1 cellpadding=5>
+<tr>
+<td>
+<font size=+2>Grammar MoksaParser</font><br>
+<a href=http://www.ANTLR.org>ANTLR</a>-generated HTML file from c:\users\svincent\moksa\src\com\svincent\moksa\Moksa.g
+<p>
+Terence Parr, <a href=http://www.magelang.com>MageLang Institute</a>
+<br>ANTLR Version 2.5.0; 1989-1998
+</td>
+</tr>
+</table>
+<PRE>
+	
+	package com.svincent.moksa;
+	
+	import java.io.*; 
+	import java.util.Vector;
+	
+	import com.svincent.util.*;
+	
+	import antlr.ScannerException;
+	
+
+/**
+ * The grammer for the Moksa language.
+ */
+class MoksaParser extends LLkParser
+
+
+/**
+ * A MoksaFile is a list of class definitons.
+ */
+<a name=moksaFile>moksaFile</a>[MoksaRuleDatabase program]
+	:	( <a href=MoksaParser.html#classDef>classDef</a>[program] )+ 
+	;
+
+
+/**
+ * A class definition.
+ * <pre>
+ *    class Foo {
+ *       [classMember];
+ *       [classMember];
+ *       [classMember];
+ *       ...
+ *    }
+ * </pre>
+ */
+<a name=classDef>classDef</a> returns [MoksaRuleDatabase program]
+	:	<a href=MoksaParser.html#modifiers>modifiers</a> "class" IDENT LCURLY ( <a href=MoksaParser.html#classMember>classMember</a>[program] )* RCURLY 
+	;
+
+
+<a name=goal>goal</a>[MoksaList goal]
+	:	<a href=MoksaParser.html#constraintList>constraintList</a> SEMI 
+	;
+
+
+<a name=constraintList>constraintList</a>[MoksaList list]
+	:	<a href=MoksaParser.html#constraint>constraint</a> ( COMMA <a href=MoksaParser.html#constraint>constraint</a> )* 
+	;
+
+
+<a name=modifiers>modifiers</a>
+	:	( <a href=MoksaParser.html#modifier>modifier</a> )* 
+	;
+
+
+/**
+ * A member of a class.
+ * Can be either a field or a predicate.
+ */
+<a name=classMember>classMember</a> returns [MoksaRuleDatabase program]
+	:	<a href=MoksaParser.html#modifiers>modifiers</a> 
+		(	<a href=MoksaParser.html#fieldMember>fieldMember</a> 
+		|	<a href=MoksaParser.html#predicateMember>predicateMember</a> 
+		) 
+		SEMI 
+	;
+
+
+/**
+ * A data field.
+ * <pre>
+ *    var Integer foo
+ * </pre>
+ */
+<a name=fieldMember>fieldMember</a>
+	:	"var" <a href=MoksaParser.html#varDeclaration>varDeclaration</a> 
+	;
+
+
+/**
+ * A predicate member
+ * <pre>
+ *    predicate foo (Integer N, Integer S, ...) :-
+ *       constraint (), constraint (), ... 
+ * </pre>
+ */
+<a name=predicateMember>predicateMember</a>[MoksaRule rule]
+	:	"predicate" <a href=MoksaParser.html#predicateHead>predicateHead</a> 
+		(	IF <a href=MoksaParser.html#predicateBody>predicateBody</a> 
+		|	
+		) 
+		
+	;
+
+
+<a name=modifier>modifier</a>
+	:	"public" 
+	|	"protected" 
+	|	"private" 
+	|	"static" 
+	|	"abstract" 
+	|	"final" 
+	|	"transient" 
+	;
+
+
+/**
+ * A variable declaration
+ * <pre>
+ *    Integer foo
+ * </pre>
+ */
+<a name=varDeclaration>varDeclaration</a>
+	:	<a href=MoksaParser.html#type>type</a> IDENT 
+	;
+
+
+<a name=type>type</a>
+	:	IDENT 
+		(	LT <a href=MoksaParser.html#type>type</a> GT 
+		|	
+		) 
+	;
+
+
+<a name=predicateHead>predicateHead</a>[MoksaFunctor head]
+	:	IDENT LPAREN <a href=MoksaParser.html#predicateParamList>predicateParamList</a> RPAREN 
+	;
+
+
+<a name=predicateBody>predicateBody</a>[MoksaList body]
+	:	<a href=MoksaParser.html#constraintList>constraintList</a> 
+	;
+
+
+<a name=predicateParamList>predicateParamList</a>[MoksaList list]
+	:	(	<a href=MoksaParser.html#predicateParameter>predicateParameter</a> ( COMMA <a href=MoksaParser.html#predicateParameter>predicateParameter</a> )* 
+		|	
+		) 
+	;
+
+
+<a name=predicateParameter>predicateParameter</a>[MoksaTerm term]
+	:	<a href=MoksaParser.html#type>type</a> <a href=MoksaParser.html#primaryExpression>primaryExpression</a> 
+	;
+
+
+<a name=primaryExpression>primaryExpression</a>[MoksaTerm term]
+	:	<a href=MoksaParser.html#varDeref>varDeref</a> 
+	|	<a href=MoksaParser.html#literal>literal</a> 
+	;
+
+
+<a name=constraint>constraint</a>[MoksaTerm constraint]
+	:	<a href=MoksaParser.html#primitiveConstraint>primitiveConstraint</a> 
+	;
+
+
+<a name=primitiveConstraint>primitiveConstraint</a>[MoksaTerm constraint]
+	:	LNOT 
+	|	<a href=MoksaParser.html#expression>expression</a> 
+		(	( ASSIGN <a href=MoksaParser.html#expression>expression</a> ) 
+		|	( LT <a href=MoksaParser.html#expression>expression</a> ) 
+		|	( GT <a href=MoksaParser.html#expression>expression</a> ) 
+		|	( "in" <a href=MoksaParser.html#expression>expression</a> ) 
+		|	
+		) 
+		
+	;
+
+
+<a name=expression>expression</a>[MoksaTerm term]
+	:	<a href=MoksaParser.html#multiplicationExpression>multiplicationExpression</a> 
+	;
+
+
+<a name=expressionList>expressionList</a>[MoksaList list]
+	:	(	<a href=MoksaParser.html#expression>expression</a> ( COMMA <a href=MoksaParser.html#expression>expression</a> )* 
+		|	
+		) 
+	;
+
+
+<a name=multiplicationExpression>multiplicationExpression</a>[MoksaTerm term]
+	:	<a href=MoksaParser.html#additionExpression>additionExpression</a> 
+		(	STAR <a href=MoksaParser.html#multiplicationExpression>multiplicationExpression</a> 
+		|	DIV <a href=MoksaParser.html#multiplicationExpression>multiplicationExpression</a> 
+		|	
+		) 
+	;
+
+
+<a name=additionExpression>additionExpression</a>[MoksaTerm term]
+	:	<a href=MoksaParser.html#listDecomposeExpression>listDecomposeExpression</a> 
+		(	PLUS <a href=MoksaParser.html#additionExpression>additionExpression</a> 
+		|	MINUS <a href=MoksaParser.html#additionExpression>additionExpression</a> 
+		|	
+		) 
+	;
+
+
+/**
+ * Supports stuff like
+ *   decons [3, 4, X, 32 | L]
+ */
+<a name=listDecomposeExpression>listDecomposeExpression</a>[MoksaTerm term]
+	:	<a href=MoksaParser.html#primaryExpression>primaryExpression</a> 
+	|	"decons" LBRACK <a href=MoksaParser.html#primaryExpression>primaryExpression</a> BOR <a href=MoksaParser.html#listDecomposeExpression>listDecomposeExpression</a> RBRACK 
+	;
+
+
+<a name=varDeref>varDeref</a>[MoksaTerm term]
+	:	IDENT 
+	;
+
+
+<a name=literal>literal</a>[MoksaTerm term]
+	:	<a href=MoksaParser.html#symbolLiteral>symbolLiteral</a> 
+	|	<a href=MoksaParser.html#literalPredicateExpression>literalPredicateExpression</a> 
+	|	<a href=MoksaParser.html#stringLiteral>stringLiteral</a> 
+	|	<a href=MoksaParser.html#integerLiteral>integerLiteral</a> 
+	|	<a href=MoksaParser.html#distributionLiteral>distributionLiteral</a> 
+	|	<a href=MoksaParser.html#diceDistributionLiteral>diceDistributionLiteral</a> 
+	;
+
+
+<a name=symbolLiteral>symbolLiteral</a>
+	:	SYMBOL_LITERAL 
+	;
+
+
+<a name=literalPredicateExpression>literalPredicateExpression</a>[MoksaTerm term]
+	:	<a href=MoksaParser.html#userPredicateExpression>userPredicateExpression</a> 
+	|	"cons" LPAREN <a href=MoksaParser.html#expression>expression</a> COMMA <a href=MoksaParser.html#expression>expression</a> RPAREN 
+	;
+
+
+<a name=stringLiteral>stringLiteral</a>[MoksaStringConstant str]
+	:	STRING_LITERAL 
+	;
+
+
+<a name=integerLiteral>integerLiteral</a>[MoksaTerm term]
+	:	NUM_INT 
+	;
+
+
+<a name=distributionLiteral>distributionLiteral</a>[MoksaList list]
+	:	<a href=MoksaParser.html#explicitDistributionLiteral>explicitDistributionLiteral</a> 
+	|	<a href=MoksaParser.html#rangeDistributionLiteral>rangeDistributionLiteral</a> 
+	;
+
+
+<a name=diceDistributionLiteral>diceDistributionLiteral</a>
+	:	( <a href=MoksaParser.html#integerLiteral>integerLiteral</a> ) D ( <a href=MoksaParser.html#integerLiteral>integerLiteral</a> ) 
+	;
+
+
+<a name=userPredicateExpression>userPredicateExpression</a>[MoksaTerm term]
+	:	IDENT LPAREN <a href=MoksaParser.html#expressionList>expressionList</a> RPAREN 
+	;
+
+
+<a name=explicitDistributionLiteral>explicitDistributionLiteral</a>[MoksaList list]
+	:	LBRACK 
+		(	<a href=MoksaParser.html#expression>expression</a> ( COMMA <a href=MoksaParser.html#expression>expression</a> )* 
+		|	
+		) 
+		RBRACK 
+	;
+
+
+<a name=rangeDistributionLiteral>rangeDistributionLiteral</a>[MoksaRangeList list]
+	:	LBRACK ( <a href=MoksaParser.html#integerLiteral>integerLiteral</a> ) RANGETO ( <a href=MoksaParser.html#integerLiteral>integerLiteral</a> ) RBRACK 
+	;
+
+</PRE>
+</BODY>
+</HTML>

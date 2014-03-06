@@ -1,0 +1,142 @@
+<html>
+<head>
+</head>
+<body>
+
+<p>An implementation of a Warren's Abstract Machine and associated
+builtin predicates, to conform to ISO Prolog.</p>
+
+<h2>How do I use it?</h2>
+
+<p>The API is still very much in flux: more will be written about it
+in this documentation as it solidifies.</p>
+
+<h2>How does it work?</h2>
+
+<p>MoksaProlog is built on top of a Warren's Abstract Machine (WAM),
+an implementation of Prolog designed by David Warren in 1983.  I don't
+have the time, inclination, or skill to describe how the WAM
+functions.  Luckily, there's a <a
+href="http://www.isg.sfu.ca/~hak/documents/wam.html">book</a> you can
+read that does that.  I can only describe what I did.</p>
+
+<p>That said, I hope that my source is self evident: I try to document
+any tricky bits, in the hope that MoksaProlog can be used as a means
+by which people can figure out how to write a Prolog environment for
+themselves, particularly in an object-oriented language like Java.</p>
+
+<p>The biggest single difference, and the trickiest thing in
+MoksaProlog's implementation, is <em>continuation passing</em>.</p>
+
+<h3>So what's continuation passing?</h3>
+
+<p>A <strong>continuation</strong> is an additional parameter to every
+function in the system that tells the function what to do when it's
+done.  This is implemented in MoksaProlog by an additional register in
+the machine called <code>continuation</code>, of type
+<code>Continuation</code>.</p>
+
+<p>If you look at the <code>Continuation</code> class, you'll see
+what's stored in it: it owns the next <code>Rule</code> to invoke
+(which is our only pointer to instructions that we have in
+MoksaProlog), the values of the argument registers to pass this
+<code>Rule</code> when invoking it, and the <code>Continuation</code>
+to pass the <code>Rule</code>, so that it knows what to do next.</p>
+
+<p>Every <code>Rule</code> in the system is responsible, then, for
+returning a <Code>Continuation</Code> instance of the thing to do
+<em>next</em>.  Often, this new <Code>Continuation</Code> is a
+function of the <Code>Continuation</Code> that was passed into the
+<code>Rule</code>.</p>
+
+<p>Let's look at some example cases, to try and make things
+clearer:</p>
+
+<ul>
+   <li>If the <code>Rule</code> wants to call another
+   <code>Rule</code>, it makes a new <Code>Continuation</Code>
+   consisting of the function to be called, its arguments, and a
+   <Code>Continuation</Code> telling the function where to go when its
+   done.
+      <ul>
+         <li>If the called <code>Rule</code> is the last thing we do,
+         then we pass it the <Code>Continuation</Code> that was passed
+         to us.</li>
+
+         <li>If we want to do something after we call the
+         <code>Rule</code>, we pass the <code>Rule</code> a
+         <Code>Continuation</Code> containing the thing we want to do
+         (which will, in turn, probably contain the
+         <Code>Continuation</Code> that was passed to us)</li>
+      </ul>
+   </li>
+
+   <li>If the <code>Rule</code> just wants to return, it returns the
+   <Code>Continuation</Code> passed into it.</li>
+
+   <li>If the <code>Rule</code> wants to fail, it returns a
+   <Code>Continuation</Code> with a call to the 'fail'
+   <code>Rule</code>: typically done by returning the global instance
+   <code>wam.Fail</code>.  This is one of the only
+   <Code>Continuation</Code>s that can be reused globally this way,
+   since Fail ignores the <Code>Continuation</Code> passed to it.</li>
+
+   <li>If the <code>Rule</code> wants to throw an exception, it
+   returns a <Code>Continuation</Code> with a call to the 'throw'
+   <code>Rule</code>.  This is typically done by calling the method
+   <code>Wam.callThrow</code>, which constructs such a
+   <Code>Continuation</Code>..</li>
+</ul>
+
+<p>Note that it is possible to pass 'null' in as the
+<Code>Continuation</Code>.  If you do this, and that ever executes,
+then the machine will halt (this is the termination case for the
+machine, currently)</p>
+
+<p>Hopefully, that helps a bit.  There are other discussions of
+continuation passing programming in most good programming language
+design/implementation books.</p>
+
+<h2>Who are you?</h2>
+
+<p>My name is <a href="http://www.svincent.com/">Shawn Vincent</a>:
+I'm a professional systems programmer, specializing in Java.  Moksa is
+something I do in my spare time: it has no particular connection or
+distance from my work life, at <a
+href="http://www.meteko.com/">Meteko</a> (which has a very cool
+product, by the way).</p>
+
+<h2>Credits</h2>
+
+<p>Vital to any software's success is the help of nice people the
+world over.  Many people have had a part in allowing MoksaProlog to be
+released, and I'll never be able to thank them all.</p>
+
+<p>The single biggest contributer to MoksaProlog has got to be <a
+href="http://www.isg.sfu.ca/~hak/">Hassan A&iuml;t-Kaci</a>, the
+author of the book: <em>Warren's Abstract Machine: A Tutorial
+Reconstruction</em>, originally published by MIT press.  If it weren't
+for this book, I'd never have been able to figure out how the WAM
+works, and how to write one.  The book itself is out of print, but
+Hassan has made it available for noncommercial use: you can download
+it in various formats from <a
+href="http://www.isg.sfu.ca/~hak/documents/wam.html">his web
+site</a>.</p>
+
+<p>Speaking about books, the book that caused me to walk the path of
+Prolog in my journeys with Moksa was <a
+href="http://www.cs.mu.oz.au/~pjs/book/book.html"><em>Programming with
+Constraints: an Introduction</em></a>, by Kim Marriott and Peter
+J. Stuckey.  It is an excellent book, well worth reading if you're
+interested in this stuff.  This book will also come in handy later on
+when I'm adding constraint processing support for Moksa.</p>
+
+<p>Also, all my teachers at the <a
+href="http://www.uwaterloo.ca/">University of Waterloo</a>, all my
+colleagues that I've worked with in the programming industry over the
+years, my friends: everybody who has influenced my programming style,
+increasing my skill, and teaching me techniques: MoksaProlog would not
+have been possible without your help.</p>
+
+</body>
+</html>

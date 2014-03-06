@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+            "http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<html>
+
+<head>
+   <title>How To Get TAGS</title>
+   <link href="moksa.css" rel="stylesheet" type="text/css">
+   <link rev="made" href="mailto:svincent@svincent.com">
+</head>
+
+<body>
+
+<h1><a href="../index.html"><img alt="Moksa Root"
+src="images/MoksaImageTeeny.gif"></a>How To Get, Install, and Run
+Moksa</h1>
+
+<hr>
+
+<h2>Step 1. Get a Java Virtual Machine</h2>
+
+  <p>Moksa is written in Java.  Therefore, you must have a Java
+  Virtual Machine installed on your machine before you can run
+  Moksa.</p>
+
+  <p>The latest verison of Moksa was compiled against and requires at
+  least Java 1.7.  <a href="mailto:svincent@svincent.com">Let me
+  know</a> if you have trouble with it.</p>
+
+
+<h2>Step 2. Download the Moksa Distribution</h2>
+
+  <p>Once you have a JVM, you can install Moksa.  You can download
+  Moksa here:<p>
+  <ol>
+  <li class="pageRef"><strong><a
+      href="http://www.svincent.com/moksa/dist/moksa.zip"> Moksa Full
+      Distribution</a></strong> -- This includes binaries, source code,
+      docs, and some meager samples</li>
+  </ol>
+
+<h2>Step 3. Install Moksa</h2>
+
+  <p>First you need to unzip the distribution.  You will need a Zip
+  utility which can deal with long filenames, such as <a
+  href="http://www.cdrom.com/pub/infozip/">InfoZip</a> (which I use),
+  or <a href="http://www.winzip.com/">WinZip</a> (if you must).
+  <strong>Warning: Early versions (2.04g and earlier) of PKUnzip will
+  <em>not</em> work, as they truncate filenames.</strong> It appears
+  that they have newer versions these days (they're at <a
+  href="http://www.pkware.com/">www.pkware.com</a>, if you care) that
+  handle long file names, etc, but I've not tried them.</p>
+
+  <p>Here is how you'd use InfoZip to unzip the package</p>
+  <p class="sourceCode">
+      C:> unzip moksa.zip
+  </p>
+
+<h2>Step 4 (Optional): edit CLASSPATH</h2>
+
+  <p>After you've unzipped the Zip file, you can edit your CLASSPATH
+  to include the distribution JAR file.</p>
+
+  <p>For example, if you've extracted the Zip file to your 'c:\moksa'
+  directory, you could edit your CLASSPATH thusly (You might want to
+  put this in your system startup file, or wherever your JVM has you
+  editing your CLASSPATH (in NT it's found in System Properties, I
+  think)):</p>
+
+  <p class="sourceCode">
+      C:\> set CLASSPATH=%CLASSPATH%;c:\moksa\moksa.jar
+  </p>
+
+<h2>Step 5. Run Moksa</h2>
+
+  <p><em>(Note that the following instructions assume that you're
+  running a Micro$oft operating system.  Unix, Mac, and other users
+  can run Moksa also, with minor variations on the notes below.  <a
+  href="mailto:svincent@svincent.com">Mail me</a> if you have any
+  questions or problems working with Moksa)</em></p>
+
+  <h3>Using MoksaProlog: the Moksa Prolog interpreter</h3>
+
+    <p>To make sure that Moksa installed properly on your system,
+    type:<p>
+
+    <p class="sourceCode">
+        C:\moksa> java -jar moksa.jar testInstall.prolog
+    </p>
+
+    <p>You can type this for help:<p>
+    <p class="sourceCode">
+        C:\moksa> java -jar moksa.jar -help
+    </p>
+
+    <p>If you've placed 'moksa.jar' in your CLASSPATH, you invoke
+    Moksa like this:</p>
+    <p class="sourceCode">
+        C:\moksa> java com.svincent.moksa.MoksaProlog -help
+    </p>
+
+  <h3>Using Prologc: the Moksa Prolog compiler</h3>
+
+    <p>There is a rudimentary compiler shipped with Moksa which
+    compiles Prolog source files into Java classes.  It can generate
+    Java source, for your own edification and amusement, or generate
+    bytecodes directly.</p>
+
+    <p>To use, go to the directory where the source file is (currently
+    necessary, unfortunately), and type something like:</p>
+
+    <p class="sourceCode">
+        C:\moksa> java com.svincent.moksa.Prologc myPrologSource.prolog
+    </p>
+
+    <p>To learn more about Prologc, you can type:</p>
+
+    <p class="sourceCode">
+        C:\moksa> java com.svincent.moksa.Prologc -help
+    </p>
+
+<h2>Step 5. Enjoy!</h2>
+
+  <p>Sorry the documentation's so scarce right now.  I'm just trying
+  to stick it out on the Net quickly, and my tech writer hasn't come
+  on-line yet.</p>
+
+<p style="text-align: center;"><img
+src="images/MoksaImageTeeny.gif"></p>
+
+<hr>
+
+<p>Moksa can be found at <a href="http://www.svincent.com/moksa/">
+http://www.svincent.com/moksa/</a> 
+
+<p><em>Comments, criticisms, carefully crafted cacophonies?  <a
+href="mailto:svincent@svincent.com">Mail me.</a></em></p>
+
+<p><em><a href="http://www.svincent.com/shawn/">To Shawn's web
+page!</a></em></p>
+
+</body>
+</html>

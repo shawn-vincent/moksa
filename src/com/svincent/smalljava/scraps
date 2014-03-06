@@ -1,0 +1,226 @@
+  
+//    /**
+//     * Generate a class with the given information.
+//     */
+//    public static ClassGen makeClass (String className,
+//                                      String superClassName)
+//    {
+//      return makeClass (className, 
+//                        superClassName,
+//                        Constants.ACC_PUBLIC | Constants.ACC_SUPER,
+//                        null);
+//    }
+
+//    /**
+//     * Generate a class with the given information.
+//     */
+//    public static ClassGen makeClass (String className,
+//                                      String superClassName,
+//                                      int accessFlags,
+//                                      String[] interfaces)
+//    {
+//      return makeClass (className, 
+//                        superClassName,
+//                        Constants.ACC_PUBLIC | Constants.ACC_SUPER,
+//                        interfaces,
+//                        "<generated>");
+//    }
+
+//    /**
+//     * Generate a class with the given information.
+//     */
+//    public static ClassGen makeClass (String className,
+//                                      String superClassName,
+//                                      int accessFlags,
+//                                      String[] interfaces,
+//                                      String sourceFileName)
+//    {
+//      return new ClassGen (className, superClassName,
+//                           sourceFileName,
+//                           accessFlags,
+//                           interfaces);
+//    }
+
+//    /**
+//     * Add Util.out to the constant pool.  Must be called before
+//     * 'appendPrintln'
+//     */
+//    public static int addUtilOut (ConstantPoolGen cp)
+//    {
+//      return cp.addFieldref ("com.svincent.util.Util", "out",
+//                             "Ljava/io/PrintWriter;");    
+//    }
+
+//    /**
+//     * Adds a Util.out.println (s) to the instruction list.
+//     * Must call addUtilOut before calling this, of course.
+//     */
+//    public static InstructionHandle appendPrintln (InstructionList il,
+//                                                   ConstantPoolGen cp,
+//                                                   int utilOut, 
+//                                                   String s)
+//    {
+//      InstructionHandle ih = 
+//        il.append (new GETSTATIC (utilOut));
+//      il.append (new PUSH (cp, s));
+//      il.append (new INVOKEVIRTUAL (cp.addMethodref ("java.io.PrintWriter",
+//                                                     "println",
+//                                                     "(Ljava/lang/String;)V")));
+//      return ih;
+//    }
+
+//    /**
+//     * Adds a Util.out.print (s) to the instruction list.
+//     * Must call addUtilOut before calling this, of course.
+//     */
+//    public static InstructionHandle appendPrint (InstructionList il,
+//                                                 ConstantPoolGen cp,
+//                                                 int utilOut, 
+//                                                 String s)
+//    {
+//      InstructionHandle ih =
+//        il.append (new GETSTATIC (utilOut));
+//      il.append (new PUSH (cp, s));
+//      il.append (new INVOKEVIRTUAL (cp.addMethodref ("java.io.PrintWriter",
+//                                                     "print",
+//                                                     "(Ljava/lang/String;)V")));
+//      return ih;
+//    }
+
+//    /**
+//     * Prints the contents of a local variable, specified by 'var'
+//     */
+//    public static InstructionHandle appendPrintIntVar (InstructionList il,
+//                                                       ConstantPoolGen cp,
+//                                                       int utilOut, 
+//                                                       int var)
+//    {
+//      InstructionHandle ih =
+//        il.append (new GETSTATIC (utilOut));
+//      il.append (new ILOAD (var));
+//      il.append (new INVOKEVIRTUAL (cp.addMethodref ("java.io.PrintWriter",
+//                                                     "print",
+//                                                     "(I)V")));
+//      return ih;
+//    }
+
+//    /**
+//     *
+//     */
+//    public static void generateCounterLoop ()
+//    {
+//      ClassGen counterClassGen = makeClass ("Counter", "java.lang.Object");
+
+//      ConstantPoolGen cp = counterClassGen.getConstantPool ();
+//      InstructionList il = new InstructionList ();
+
+//      MethodGen mainMethodGen =
+//        new MethodGen (Constants.ACC_PUBLIC | Constants.ACC_STATIC,
+//                       Type.VOID, // return
+//                       new Type[] { new ArrayType (Type.STRING, 1) }, // arg type
+//                       new String[] { "args" }, // arg name
+//                       "main", // method name
+//                       "Counter", // class name
+//                       il, // instruction list
+//                       cp); // constant pool reference
+    
+//      // --- get a reference to Util.out
+//      int utilOut = addUtilOut (cp);
+
+//      // --- Program ----------------------------------------------------------
+
+//      // --- declare local variable 'i'.
+//      //    int i = 0;
+//      LocalVariableGen iGen = 
+//        mainMethodGen.addLocalVariable ("i", Type.INT, null, null);
+//      int i = iGen.getIndex ();
+//      il.append (new ICONST (0)); // initial value 0 to stack
+//      il.append (new ISTORE (i)); // store stack top to 'i'.
+
+//      //    Util.out.println ("Starting loop program!");
+//      appendPrintln (il, cp, utilOut, "Starting loop program!");
+
+//      // loopBegin:
+//      //    Util.out.println (i);
+//      InstructionHandle loopBegin = 
+//        appendPrintIntVar (il, cp, utilOut, i);
+    
+//      //    i ++;
+//      il.append (new IINC (i, 1));
+
+//      //    Util.out.print ("++ = ");
+//      appendPrint (il, cp, utilOut, "++ = ");
+//      //    Util.out.print (i);
+//      appendPrintIntVar (il, cp, utilOut, i);
+//      //    Util.out.println ("");
+//      appendPrintln (il, cp, utilOut, "");
+
+//      //    10 - i
+//      il.append (new BIPUSH ((byte)10));
+//      il.append (new ILOAD (i));
+//      il.append (new ISUB ());
+
+//      //    if (stackTop != 0) goto loopBegin
+//      il.append (new IFNE (loopBegin));
+
+//      //    RETURN
+//      il.append (new RETURN ());
+
+//      // --- End Program ------------------------------------------------------
+
+//      // --- set max stack
+//      mainMethodGen.setMaxStack (2);
+
+//      // --- add all methods to class
+//      counterClassGen.addEmptyConstructor (Constants.ACC_PUBLIC);
+//      counterClassGen.addMethod (mainMethodGen.getMethod ());
+
+//      // --- dump class to file
+//      try {
+//        counterClassGen.getJavaClass ().dump ("Counter.class");
+//      } catch (java.io.IOException ex) {
+//        ex.printStackTrace (Util.out);
+//      }
+//    }
+
+
+//    /**
+//     *
+//     */
+//    public static void generateHelloWorld ()
+//    {
+//      ClassGen personClassGen = makeClass ("Person", "java.lang.Object");
+
+//      ConstantPoolGen cp = personClassGen.getConstantPool ();
+//      InstructionList il = new InstructionList ();
+
+//      MethodGen mainMethodGen =
+//        new MethodGen (Constants.ACC_PUBLIC | Constants.ACC_STATIC,
+//                       Type.VOID, // return
+//                       new Type[] { new ArrayType (Type.STRING, 1) }, // arg type
+//                       new String[] { "args" }, // arg name
+//                       "main", // method name
+//                       "Person", // class name
+//                       il, // instruction list
+//                       cp); // constant pool reference
+
+//      // --- get a reference to Util.out
+//      int utilOut = addUtilOut (cp);
+    
+//      appendPrintln (il, cp, utilOut, "Hello, world:  I am a person!");
+
+//      // --- append a return at the end.
+//      il.append (new RETURN ());
+
+//      mainMethodGen.setMaxStack (2);
+
+//      personClassGen.addMethod (mainMethodGen.getMethod ());
+
+//      personClassGen.addEmptyConstructor (Constants.ACC_PUBLIC);
+
+//      try {
+//        personClassGen.getJavaClass ().dump ("Person.class");
+//      } catch (java.io.IOException ex) {
+//        ex.printStackTrace (Util.out);
+//      }
+//    }

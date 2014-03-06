@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+            "http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<html>
+
+<head>
+   <title>Smalljava: a compiler backend tool</title>
+   <link href="../doc/moksa.css" rel="stylesheet" type="text/css">
+   <link rev="made" href="mailto:svincent@svincent.com">
+</head>
+
+<body>
+
+<h1><a href="../index.html"><img src="../doc/images/MoksaImageTeeny.gif"></a>Smalljava</h1>
+
+<hr/>
+
+<img class=floatRight src="../doc/images/MoksaImage2.gif">
+
+<h2>The First release of Smalljava is Available</h2>
+
+<p>Smalljava is a Java API for generating bytecodes in a natural,
+convenient way.</p>
+
+<p>Smalljava is the first phase of the <a href="../index.html">Moksa
+project</a>.  Once Smalljava is stable, work will begin on MoksaProlog,
+a 100% Java Prolog environment, which will become the basis of
+Moksa.</p>
+
+<p>Smalljava is based on the excellent <a
+href="http://www.inf.fu-berlin.de/~dahm/JavaClass/index.html">JavaClass</a>
+library, written by <a href="http://www.inf.fu-berlin.de/~dahm">Markus
+Dahm</a>.  You need the JavaClass library in order to run Smalljava.
+This library is available either from the JavaClass web site, or from
+this page.</p>
+
+<h2>Licence</h2>
+
+<p>Smalljava is made available under the <a
+href="http://www.gnu.org/copyleft/gpl.html">GNU General Public
+License</a>.</p>
+
+<h2>Obtaining Smalljava</h2>
+
+<p>The following entities are available for download.</p>
+
+<ul>
+<li class=pageRef><a class=pageRef href="../dist/smalljava.jar">
+Smalljava JAR file</a> - <strong>required</strong> - <span
+class=pageDesc>The compiled class files for Smalljava.</span></li>
+
+<li class=pageRef><a class=pageRef href="../dist/javaclass.jar">
+JavaClass JAR file</a> - <strong>required</strong> - <span
+class=pageDesc>JavaClass library: required in order to run
+Smalljava.</span></li>
+
+<li class=pageRef><a class=pageRef href="../dist/smalljavasrc.zip">
+Smalljava source</a> - <span class=pageDesc>The source code for
+Smalljava (written entirely in Java).</span></li>
+
+<li class=pageRef><a class=pageRef href="../dist/moksajavadoc.zip">
+The Moksa JavaDoc bundle</a> - <span class=pageDesc> This is the Moksa
+JavaDoc documentation bundle.  It has lots of extraneous
+documentation, to nonreleased packages from Moksa, but also includes
+the two packages which have been released: com.svincent.util and
+com.svincent.smalljava.  You'll need this if you want to do any
+programming with Smalljava. </span></li>
+</ul>
+
+<h2>Requirements</h2>
+
+<p>As of this time, Smalljava requires a working installation of the
+<a
+href="http://java.sun.com/products/jdk/1.2/jre/index.html">JRE1.2</a>
+(or the Java 2.0 platform, if you believe in the <a
+href="http://java.sun.com/products/jdk/1.2/java2.html">new name</a>).
+This requirement is due to my use, in particular, of the JDK1.2
+collections API.  It is probably possible to get it to run on earlier
+versions of the JDK, but I don't particularly want to do it.</p>
+
+<h2>Installing Smalljava</h2>
+
+<p>There are two very easy ways to install Smalljava.</p>
+
+<h3>Way 1</h3> <p>The first way is probably the easiest.  Just copy
+smalljava.jar and javaclass.jar into your JRE standard extensions
+directory, and run away.</p>
+
+<h3>Way 2</h3> <p>The second way is sometimes better.  Modify your
+CLASSPATH environment variable to include javaclass.jar and
+smalljava.jar, and that's it.</p>
+
+<h3>Checking your installation</h3>
+
+<p>To check to ensure that Smalljava is installed correctly, go to
+some empty directory, and type </p>
+<pre>
+    java com.svincent.smalljava.SmallClass
+</pre>
+<p>This should create two files in the current directory:
+'Person.java' and 'Person.class'.  You can directly run 'Person.class'
+by typing </p>
+<pre>
+    java Person
+</pre>
+<p>This will spew lots of loop outputs and &quot;Hello World&quot;'s
+to your screen, indicating that Smalljava is installed correctly</p>
+
+<h2>Documentation</h2>
+
+<p>Currently, there is only Javadoc documentation available for
+Smalljava.  I have, however, attempted to make the Javadoc
+documentation usable, unlike many online packages.  The Javadoc bundle
+is available for download, above, or can be <a
+href="../doc/api/index.html">browsed online</a>.  Also, see the <a
+href="../doc/api/com/svincent/smalljava/package-summary.html">package
+documentation</a> for more instructions on how to use the
+documentation.</p>
+
+<hr/>
+
+<p>Moksa can be found at <a href="http://www.svincent.com/moksa/">
+http://www.svincent.com/moksa/</a>
+
+<p><em>Comments, Criticisms, Complaints, Crazy Cookies to: <a
+HREF="mailto:svincent@svincent.com">svincent@svincent.com</a></em></p>
+
+</body>
+</html>

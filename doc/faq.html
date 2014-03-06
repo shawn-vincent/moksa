@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+            "http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<html>
+<head>
+   <title>The Moksa FAQ List (with answers!)</title>
+   <link href="moksa.css" rel="stylesheet" type="text/css">
+   <link rev=made href="mailto:svincent@svincent.com">
+   <!-- Hand-written HTML by Shawn P. Vincent. -->
+   <!-- No generators for me! Just the power of Emacs! -->
+</head>
+<body bgcolor="#ffffff">
+
+<h1><a href="../index.html"><img alt="Moksa Root"
+src="images/MoksaImageTeeny.gif"></a>The Official Moksa Frequently
+Asked Questions List (with answers!)</h1>
+
+<hr>
+
+<h2>What is Moksa?</h2>
+
+  <p> Moksa started as an effort to create a useful character
+  generator for the Advanced Dungeons&amp;Dragons gaming system.  It
+  can do that, but it has become much more than that. </p>
+
+  <p>Moksa is a system-independent, customizable, easily portable,
+  powerful, and, above all, <em>useful</em> character generation
+  utility for role-playing games.</p>
+
+  <p>Moksa can also create most other forms of random content for
+  roleplaying games, or anything else you might like to have random
+  content for.<p>
+
+  <p>I use it to decide which restaurant I will lunch at.</p>
+
+  <p>Moksa is free (and will <em>always</em> be free, under the <a
+  href="gpl.html">GNU General Public License</a>), and is written by
+  me (Shawn Vincent).</p>
+
+  <p>It is available from <a href="http://www.svincent.com/moksa/">
+  http://www.svincent.com/moksa/</a> </p>
+
+
+<h2>Why another character generation utility?</h2>
+
+  <p>Many will undoubtedly ask this question: why would I bother to
+  write yet another character generation utility, when literally
+  dozens already exist, and are freely available for download!?  </p>
+
+  <p>I've used most of the existing character generators on the 'net,
+  and nearly all of them suffer from one or more of the following (in
+  my opinion) fatal flaws: </p>
+
+  <ul style="margin-left: 4em;">
+  <li><strong>Inflexible attribute generation order</strong>. Most of
+  the existing utilities force the user to decide on things about the
+  character in a particular order: first attribute scores, then class,
+  then race, whatever. People like me, however, when they write up a
+  character by hand, start out with some set of restrictions (say: I
+  want a fighter today, and I get 3,000 XP to start with), and then
+  build the character. These programs don't help at all in these
+  cases. Moksa will. </li>
+
+  <li><strong>Forced interactivity</strong>. Most of the current
+  utilities assume that you're going to be sitting there throughout
+  the char. generation process, to answer questions. Generating 100
+  characters, 60% of whom are fighters, and 40% of whom are clerics,
+  would be unthinkable in this system. Moksa will do this. </li>
+
+  <li><strong>Tethered to a single gaming system</strong>. Most of the
+  current utilities are game-system specific. That is, they only work
+  to generate characters for AD&amp;D, or they only work to generate
+  characters for Paranoia, etc.  Moksa will generate characters for
+  any and all game systems, if you feed it the rules of that
+  system. </li>
+
+  <li><strong>No support for house rules</strong> Some of the
+  utilities I've seen support minor house rules modifications, but
+  nothing too useful. Since the rules are all arbitrary to Moksa
+  anyway, any house rule can be specified. I'll have to be careful to
+  make the rule specification language easy to learn/use, though. In
+  addition, Moksa will tag each rule with page number/supplement ID,
+  and you will be able to turn on/off various supplements for your
+  gaming system (&quot;I don't want to generate characters with
+  oriental proficiencies&quot;, etc). </li>
+  </ul>
+
+  <p> In short, the current utilities available didn't serve
+  <em>my</em> needs, and so I decided to go all out and overkill the
+  problem. &lt;chuckle&gt; </p>
+
+
+<h2>You said &quot;Random Content Generation&quot;.  Whazzat?</h2>
+
+  <p>Well, in the course of over-engineering Moksa, I discovered that
+  it was good for generating things other than characters.  If you
+  want to generate tavern menus, random bibles, random music for
+  national anthems, or even decide what resaurant you're going to go
+  to today, Moksa can help you out.</p>
+
+<h2>&lt;snicker&gt;....that's just a pipe dream!</h2>
+
+  <p>Sounds like it, doesn't it? The utopia of character generators?
+  Can't be written? Stupid Vincent character, muttering to himself
+  about impossibilities?</p>
+
+  <p>Well, it's true. I've figured out how to do it: <br>Moksa is
+  based on the concept of <em>constraint satisfaction programming
+  </em>. That is, it is an engine which searches efficiently through
+  the space of characters, using symbolic math whose basic constants
+  are random distributions.</p>
+
+  <p>Many gaming systems have attributes whose values are based,
+  somehow, on a random value. Taking, for instance, AD&amp;D (my
+  personal expertise lies mostly there), Constitution is defined to be
+  3d6. This generates a bell curve, centered roughly on 9. A table
+  lookup on this value gives you the constitution HP bonus, which is
+  some small constant. This is also a bell curve, centered on 0, with
+  it's low value being some small negative constant, and its high
+  value being some small positive constant. See? Now, assume that
+  classes are determined randomly, according to some distribution.  A
+  table lookup on class will give you hit dice.</p>
+
+  <p>Hit Points, then, can be viewed as a random distribution of
+  values, derived from the random distributions of hit dice,
+  constitution HP bonus, level, and whatever other factors come into
+  play.</p>
+
+  <p>All of these relations can be described mathematically. This is
+  the basis of Moksa. Given a bunch of rules and initial random
+  distributions, and possibly some restrictions on the initial random
+  distributions, generate particular values for all of the attributes
+  making up a character.</p>
+
+  <p>Viewed this way, reverse-engineering game system rules is a
+  fairly simple mathematical process, as long as the random
+  distribution libraries exist and work well.  In fact, CSPs have been
+  studied in the field of AI for years, and are used extensively in
+  applications such as scheduling.</p>
+
+  <p>So Moksa isn't so much of a pipe dream, after all. In fact, there
+  is <em>significant</em> progress made on it already.  You can get a
+  (very alpha-quality) running version at <a
+  href="http://www.svincent.com/moksa/">
+  http://www.svincent.com/moksa/</a></p>
+
+
+<h2>What's the status on Moksa?</h2>
+
+  <p>Moksa is currently in very-pre-alpha mode, and doesn't do most of
+  the things I claim for it: yet.  Keep an eye on the <a
+  href="http://www.svincent.com/moksa/">web page</a> for info and
+  updates...</p>
+
+<h2>How much does Moksa cost?</h2>
+
+  <p>When I finish Moksa, I will release it, and the source-code for
+  free, under the <a href="gpl.html">GNU General Public License</a>.
+  The UI and the rule spec. language are going to be very isolated
+  from the rest of the engine.  Moksa is written in JAVA, and so will
+  be very easy (one might say trivial) to port.</p>
+
+  <p>I am also <a href="download.html"> releasing prerelease versions
+  of Moksa for public examination</a>.  Like the final system, these
+  are free and under the <a href="gpl.html">GPL</a>, and full source
+  code is (of course) available.</p>
+
+  <p>Although Moksa is free, under the <a href="gpl.html">GPL</a>,
+  I've always thought it would be neat if people would send me nifty
+  things.  Take a look at the <a
+  href="giraffeware.html">GiraffeWare</a> page.</p>
+
+  <p>When I finish it, I'll post to rec.games.frp.dnd-util about its
+  availability. I will also post updates here.</p>
+
+<h2>Wow!  Neat!  How can I help!?</h2>
+
+  <p>If you're a programmer, and add a neat feature to Moksa, and send
+  it off to me, I'll take a look at it, and maybe incorporate it into
+  Moksa.  Since Moksa is under the <a href="gpl.html">GPL</a>, your
+  changes will be freely available, just like Moksa itself.</p>
+
+  <p>The more people contribute, the better Moksa can become.  This is
+  the joy of Free Software.</p>
+
+  <p>In general, though, I'm looking for feedback on how I can make
+  Moksa better and more subservient to your needs.  Any ideas here
+  would be greatly appreciated</p>
+
+<p style="text-align: center;"><img
+src="images/MoksaImageTeeny.gif"></p>
+
+<hr>
+
+<p>Moksa can be found at <a href="http://www.svincent.com/moksa/">
+http://www.svincent.com/moksa/</a>
+
+<p><em>Comments, Complaints or Cool Captive Creature Consciousnesses?
+<a HREF="mailto:svincent@svincent.com">Mail me.</a></em></p>
+
+<p><em><a href="http://www.svincent.com/shawn/">To Shawn's web
+page!</a></em></p>
+
+</body>
+</html>

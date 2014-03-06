@@ -1,0 +1,76 @@
+
+body {
+  background-color: #fff;
+  margin-top: 0.25in;
+  margin-left: 0.5in;
+  margin-right: 0.5in;
+}
+
+h1 {
+  font-family: sans-serif;
+}
+
+h2 {
+  font-family: sans-serif;
+}
+
+h3 {
+  font-family: sans-serif;
+  margin-left: 2em;
+}
+
+p {
+  margin-left: 2em;
+}
+p.indented {
+  margin-left: 4em;
+}
+
+.sourceCode {
+  background-color: steelgrey;
+  margin-left: 4em;
+  font-family: "Courier", monospace;
+}
+pre {
+  margin-left: 2em;
+}
+ul {
+  margin-left: 2em;
+}
+
+ol {
+  margin-left: 4em;
+}
+
+img {
+  border: none;
+}
+
+.floatLeft {
+  float: left;
+}
+.floatRight {
+  float: right;
+}
+
+li.pageRef {
+  margin-top: 0.2em;
+  list-style-image: "url('images/filebullet.gif')";
+}
+
+a:hover {
+  color: red;
+}
+
+a.pageRef {
+  font-weight: bold;
+}
+
+span.pageDesc {
+}
+
+div.sidebar {
+  background-color: lightblue;
+  border: solid black 1px;
+  padding: 0.5em;
+}

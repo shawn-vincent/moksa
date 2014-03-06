@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+            "http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<html>
+<head>
+   <title>A Brief History of Moksa</title>
+   <link href="moksa.css" rel="stylesheet" type="text/css">
+   <link rev=made href="mailto:svincent@svincent.com">
+   <!-- Hand-written HTML by Shawn P. Vincent. -->
+   <!-- No generators for me! Just the power of Emacs! -->
+</head>
+<body bgcolor="#ffffff">
+
+<h1><a href="../index.html"><img alt="Moksa Root"
+src="images/MoksaImageTeeny.gif"></a>A Brief History of Moksa</h1>
+
+<hr>
+
+  <p>(Unfortunately, the history isn't brief, but my description will
+  have to be)</p>
+
+<h2>In The Beginning...</h2>
+
+  <p>I started playing RPGs years and years ago: my first ventures
+  into the field were as far back as '83 (which might not be all that
+  long ago to old-timers in the gaming community, but it seems long
+  ago to me). I&nbsp;played Basic Dungeons &amp; Dragons, moving along
+  to Advanced D&amp;D, and recently branching out into other gaming
+  systems.</p>
+
+  <p>Since the beginning, however, my interest in computers forced me
+  to think that there had to be some way to automatically generate
+  characters with the computer. Typically, this is a process which can
+  take hours, and will likely consume your entire first gaming session
+  (A character that you expect to play for years isn't a trivial
+  thing, and you want to be sure you don't make mistakes that'll bite
+  you later). It's essentially applying deterministic rules, to
+  generate stats, and looks automatable (don't get me wrong: I'm a
+  stong believer in detailed character histories, personalities, and
+  the like, but I'd rather not spend days figuring out what the
+  correct bonuses for a 16 strength are this week, if I'm a
+  dwarf).</p>
+
+<h2>The First Attempt...</h2>
+
+  <p>So, naturally, I wrote one. It looks pretty easy. My first
+  attempt was a really gross Pascal program written with the help of
+  my friend, <a href="http://access.mbnet.mb.ca/~gargoyle">Christian
+  Schlosser</a>. It was buggy, and was never really finished, and made
+  liberal use of massive global arrays (we actually had to increase
+  the static allocated memory the compiler gave the program to its
+  maximum value, and still were running into problems).  It was then
+  that I discovered that it wasn't nearly as easy as I'd hoped.  (I
+  don't even know where the code for that program went, now)</p>
+
+<h2>The Miriad Attempts</h2>
+
+  <p>Since then, I've worried on the problem (for those who are
+  interested, that was 1989-90). I came up with the basic ideas behind
+  what I wanted out of (what was then called) TAGS a year or two ago,
+  but the way that I was thinking about it was wrong, and wouldn't
+  work.</p>
+
+<h2>The Beginning of the End...</h2>
+
+  <p>Sometime in late '94, early '95, I had the basic idea down pat. I
+  wasn't sure it would work (what about nondeterminism??), but I was
+  on the right track, and actually cornered one of my statistics profs
+  at the University of Waterloo to help me work through some of the
+  more technical math issues.  The name came around then, too, when I
+  was thinking about characters as collections of tagged values (which
+  are now termed 'variables', and 'tags' are something else
+  altogether...but I figured I'd keep the word around somewhere, since
+  the project <em>is</em> named that). I had a nondeterministic
+  algorithm in my head for the core char generation routine, which
+  evolved into the one used today. About a month after this, however,
+  I gave up my idea as hopeless, because I thought it couldn't be
+  done.</p>
+
+  <p>In November or December of '95, however, I picked it up again
+  when I found some slides that I'd used for a presentation of TAGS to
+  my Independent Studies class earlier in the year. I was explaining
+  it to a friend (either <a
+  href="http://www.csclub.uwaterloo.ca/u/wwiewior/">Victor
+  Wiewiorowski</a> or <a href="http://www.vrolyk.org/jp/">John Paul
+  Vrolyk</a>, I don't remember) and couldn't figure out why it was
+  impossible.  After careful consideration, I decided that it wasn't,
+  actually, and I had just made a mistake in my reasoning. So it came
+  back to life.</p>
+
+  <p>I worked through most of the details of the previous incarnation
+  of TAGS with my roommates (<a
+  href="http://www.csclub.uwaterloo.ca/u/wwiewior/">Victor</a>, <a
+  href="http://www.vrolyk.org/jp">John Paul</a>, and
+  <a href="http://diviner.com/~cbthiess">
+  Chris Thiessen</a>), and it was actually JP that came up with the
+  amazing name (the Totally Automated Generation System) that TAGS was
+  the acronym of.</p>
+
+  <p>I worked on this C++ version for a while, before giving up on it.
+  It wasn't quite right.  I had the idea that I needed to propogate
+  deterministic sets around, and stuff like that, but I didn't
+  understand exactly how.  I actually got this version sort of working,
+  limping along, but finally gave up, getting engrossed in school and
+  work, and not having amazing success near the end.</p>
+
+
+<h2>The Wonders of Java, and the Current Incarnation...</h2>
+
+  <p>Then one day I heard the magical words: &quot;Constraint
+  Satisfaction Problem&quot;, and my life has never been the same
+  since.  It turns out that hundreds of AI researchers have been
+  working on this problem for years!  So, I read up on it, and finally
+  took a course in AI, and one lecture dedicated to CSP's did the
+  trick.  The concepts of TAGS crystallized in my mind, and I hacked
+  out a quick version in three days in Java.</p>
+
+  <p>Over the next couple of weeks, I worked on it, and finally
+  version 0.2 was released on the Internet.</p>
+
+
+<h2>Disaster strikes, and a New Hope, with a New Name</h2>
+
+  <p>Some months after playing around with Constraint Satisfaction
+  Problems as a way to generate random content, I discovered some
+  fatal flaws.  TAGS was turning into a programming language, but it
+  wasn't a very <em>nice</em> programming language, as languages go.
+  It was weak and ineffectual.  So, this made me rethink what I was
+  doing.  I read and pondered, and gave up, and tried again.
+  Eventually, I settled on something called &quot;Constraint Logic
+  Programming&quot;.  This is a programming paradigm based on
+  constraints: just like TAGS was a programming paradigm based on
+  constraints.</p>
+
+  <p>At about the same time, I was taking a Religions of the East
+  course, and discovered an amazing term: <em>Moksa</em>.  It means
+  &quot;To escape from the cycle of death and rebirth.&quot; This is
+  just what I wanted to do, so I've changed the name.  So TAGS is now
+  Moksa.</p>
+
+  <p>Moksa is a logic programming language, based roughly on Prolog,
+  or CLP(FD).  The only thing you can do in a language like this is
+  specify primitive constraints, like <code>X=3</code>, or <code>A = B
+  + C</code>, and define new user constraints, such as:</p>
+
+  <pre>
+      grandfather (G, X) :- 
+         father (G, Y), father (Y, X).
+  </pre>
+
+  <p>(This says that 'G' is the grandfather of 'X' if 'G' is the
+  father of 'Y' and 'Y' is the father of 'X').</p>
+
+  <p>Using rules like this, we can build up complex constraint
+  networks, that constrain the random content.</p>
+
+<h2>The Final Stretch (we can only hope)</h2>
+
+  <p>Finally, after writing a complete working version based on naive
+  approaches to Prolog implementation, I bit the bullet and started to
+  write a WAM-based version.</p>
+
+  <p>Relatively quickly, I had a working simple Prolog environment,
+  and I'm working towards making it robust, clean, simple, fast, and
+  ISO-compliant.  After that, it will be a simple matter to add the
+  features that will create the greatest random gaming content utility
+  of all time.</p>
+
+  <p>Well, possibly not the greatest, but <em>certainly</em> the most
+  over-engineered.  I just hope somebody uses it, in the end.</p>
+
+  <p>And Moksa is becoming reality.</p>
+
+  <p>And God saw that it was Good.</p>
+
+<p style="text-align: center;"><img
+src="images/MoksaImageTeeny.gif"></p>
+
+<hr>
+
+<p>Moksa can be found at <a href="http://www.svincent.com/moksa/">
+http://www.svincent.com/moksa/</a>
+
+<p><em>Comments, Criticisms, Critters, Complaints and Commendations to:
+<a href="mailto:svincent@svincent.com">svincent@svincent.com</a></em></p>
+
+<p><em><a href="http://www.svincent.com/shawn/">To Shawn's web
+page!</a></em></p>
+
+</body>
+</html>
